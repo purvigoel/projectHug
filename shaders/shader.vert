@@ -14,6 +14,7 @@ out vec3 rayStart;
 out vec3 rayDir;
 out mat4x4 cam;
 
+uniform int timer;
 // Transformation matrices
 uniform mat4 p;
 uniform mat4 v;
