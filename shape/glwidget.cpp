@@ -1,5 +1,5 @@
 #include "glwidget.h"
-#include "settings.h"
+#include "Settings.h"
 #include <math.h>
 #include <iostream>
 #include "ResourceLoader.h"

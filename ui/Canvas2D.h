@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "SupportCanvas2D.h"
-#include "camera.h"
+#include "Camera.h"
 class RayScene;
 
 class Camera;
