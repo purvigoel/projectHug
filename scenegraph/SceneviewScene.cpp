@@ -27,23 +27,24 @@ SceneviewScene::SceneviewScene()
     loadWireframeShader();
     loadNormalsShader();
     loadNormalsArrowShader();
-
+    // indicates if we should redraw
     m_tesselated = false;
-    std::cout << "scene load" << std::endl;
 }
 
 SceneviewScene::~SceneviewScene()
 {
-    std::cout << "deleting sceneview" << std::endl;
+    // clear up memory
     int numShapes = m_shapeList.size();
     for(int i = 0; i < numShapes; i++){
         GLWidget *deleteShape = m_shapeList[i];
-        if(deleteShape){
-            delete deleteShape;
-        }
+        delete deleteShape;
     }
     m_shapeList.clear();
     m_tesselated = false;
+
+}
+
+void SceneviewScene::updateShader(int i){
 
 }
 
@@ -92,7 +93,6 @@ void SceneviewScene::setSceneUniforms(SupportCanvas3D *context) {
     m_phongShader->setUniform("useArrowOffsets", false);
     m_phongShader->setUniform("p" , camera->getProjectionMatrix());
     m_phongShader->setUniform("v", camera->getViewMatrix());
-
 }
 
 void SceneviewScene::setMatrixUniforms(Shader *shader, SupportCanvas3D *context) {
@@ -108,6 +108,7 @@ void SceneviewScene::setLights()
     // The lighting information will most likely be stored in CS123SceneLightData structures.
     //
 
+    // call phongShader's setlight method. We clean up the light vector in Scene.cpp
     for(int i = 0; i < m_lightInfo.size(); i++){
         m_phongShader->setLight(*m_lightInfo[i]);
     }
@@ -123,9 +124,7 @@ void SceneviewScene::renderGeometry() {
     // know about OpenGL and leverage your Shapes classes to get the job done.
     //
 
-    std::cout << "rendering geometry" << " " << m_primitiveInfo.size() << std::endl;
-
-
+    // only tesselate if we have to. We use parameters of 10/10.
     if(m_tesselated == false){
         m_tesselated = true;
         for(int i = 0; i < m_primitiveInfo.size(); i++){
@@ -133,7 +132,6 @@ void SceneviewScene::renderGeometry() {
             m_phongShader->applyMaterial(p->material);
             m_phongShader->setUniform("m", p->mat);
 
-            std::cout<<glm::to_string(p->mat)<<std::endl;
             GLWidget * c;
             switch(p->type){
 
@@ -159,21 +157,24 @@ void SceneviewScene::renderGeometry() {
                 break;
             case PrimitiveType::PRIMITIVE_SPHERE:
                 c = new Sphere();
-                c->initializeShape(50,50);
+                c->initializeShape(10,10);
                 c->draw();
                 break;
             case PrimitiveType::PRIMITIVE_MESH:
+                std::cout << "Meshes aren't implemented yet! Here's a cube" << std::endl;
                 c = new Cube();
                 c->initializeShape(10,10);
                 c->draw();
                 break;
             default:
+                std::cout << "Sorry, I couldn't recognize that shape" << std::endl;
                     break;
             }
             m_phongShader->setUniform("m", glm::mat4(1.0f));
             m_shapeList.push_back(c);
         }
     } else {
+        // no need to tesselate if we already have.
         for(int i = 0; i < m_primitiveInfo.size(); i++){
             PrimitiveInfo *p = m_primitiveInfo[i];
             m_phongShader->applyMaterial(p->material);
