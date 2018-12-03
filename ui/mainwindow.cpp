@@ -390,7 +390,10 @@ void MainWindow::renderImage() {
 
     if (glScene) {
         // TODO: Set up RayScene from glScene and call ui->canvas2D->setScene()
-        RayScene *rayScene = new RayScene(*glScene);
+
+
+        RayScene * rayScene = new RayScene(*glScene);
+
         ui->canvas2D->setScene(rayScene);
 
         // Disable the UI so the user can't interfere with the raytracing
@@ -402,7 +405,6 @@ void MainWindow::renderImage() {
 
         // Render the image
         QSize activeTabSize = ui->tabWidget->currentWidget()->size();
-        std::cout << m_canvas3D->width() << " " << activeTabSize.width() << std::endl;
         ui->canvas2D->renderImage(m_canvas3D->getCamera(), activeTabSize.width(), activeTabSize.height());
 
         // Swap the "stop rendering" button for the "render" button

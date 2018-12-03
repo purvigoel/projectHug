@@ -8,6 +8,7 @@
 
 #include "glm/glm.hpp"
 
+
 class BGRA;
 class Camera;
 class OpenGLScene;
@@ -55,6 +56,8 @@ public:
     // This function will be called by the UI when the settings have changed.
     virtual void settingsChanged();
 
+    void updateShader();
+
 public slots:
     // These will be called by the corresponding UI buttons on the Camtrans dock
     void resetUpVector();
@@ -71,6 +74,7 @@ public slots:
     void updateCameraRotationN();
     void updateCameraClip();
 
+    void updateImage();
 signals:
     void aspectRatioChanged();
 
@@ -109,6 +113,12 @@ private:
     OpenGLScene *m_currentScene;
     std::unique_ptr<ShapesScene> m_shapesScene;
     std::unique_ptr<SceneviewScene> m_sceneviewScene;
+    void setUpImage();
+    GLuint m_tID;
+    QImage m_image;
+    QTimer *m_timer;
+
+    int m_tick;
 };
 
 #endif // SUPPORTCANVAS3D_H

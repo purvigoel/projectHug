@@ -15,7 +15,7 @@
 #include <iostream>
 #include "gl/GLDebug.h"
 #include "CS123XmlSceneParser.h"
-
+#include <QImage>
 SupportCanvas3D::SupportCanvas3D(QGLFormat format, QWidget *parent) : QGLWidget(format, parent),
     m_isDragging(false),
     m_settingsDirty(true),
@@ -23,10 +23,45 @@ SupportCanvas3D::SupportCanvas3D(QGLFormat format, QWidget *parent) : QGLWidget(
     m_defaultOrbitingCamera(new OrbitingCamera()),
     m_currentScene(nullptr)
 {
+
+    //setUpImage();
+    m_timer = new QTimer(this);
+    QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(updateImage()) );
+    m_timer->start(200);
+    m_tick = 0;
 }
 
 SupportCanvas3D::~SupportCanvas3D()
 {
+    delete m_timer;
+}
+
+void SupportCanvas3D::setUpImage(){
+    int sphereNum = 6;
+    QImage image(sphereNum, 1, QImage::Format_RGBA8888);
+    for(int i = 0; i < sphereNum; i++ ){
+        float x = float(i);
+        float y = abs(sin(x) * 255.0);
+    }
+
+    m_image = image;
+    glGenTextures(1, &m_tID); // 0 is the texture ID
+    glBindTexture(GL_TEXTURE_RECTANGLE, m_tID);
+
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+}
+
+void SupportCanvas3D::updateShader(){
+    m_currentScene->updateShader(m_tick);
+    m_tick = m_tick + 1;
+}
+
+void SupportCanvas3D::updateImage(){
+    updateShader();
+    update();
 }
 
 Camera *SupportCanvas3D::getCamera() {

@@ -27,11 +27,11 @@
 #include "brush/SmudgeBrush.h"
 #include "brush/SpecialBrush.h"
 
-#include "brush/filter.h"
-#include "brush/filteredge.h"
-#include "brush/filteraverage.h"
-#include "brush/filterscale.h"
-#include "brush/filtermedian.h"
+#include "filter/filter.h"
+#include "filter/filteredge.h"
+#include "filter/filteraverage.h"
+#include "filter/filterscale.h"
+#include "filter/filtermedian.h"
 
 #include "glm/ext.hpp"
 #include "math.h"
