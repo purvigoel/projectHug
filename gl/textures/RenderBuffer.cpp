@@ -1,13 +1,15 @@
 #include "RenderBuffer.h"
 
 #include "GL/glew.h"
-
+#include <iostream>
 using namespace CS123::GL;
 
 RenderBuffer::RenderBuffer() :
     m_handle(0)
 {
     // TODO [Task 8] Call glGenRenderbuffers
+    std::cout << "hi im a renderbuffer" << std::endl;
+    glGenRenderbuffers(1, &m_handle);
 }
 
 RenderBuffer::RenderBuffer(RenderBuffer &&that) :
@@ -25,11 +27,13 @@ RenderBuffer& RenderBuffer::operator=(RenderBuffer &&that) {
 
 RenderBuffer::~RenderBuffer()
 {
+    glDeleteRenderbuffers(1, &m_handle);
     // TODO Don't forget to delete!
 }
 
 void RenderBuffer::bind() const {
     // TODO [Task 8] Bind the renderbuffer
+    glBindRenderbuffer(GL_RENDERBUFFER, m_handle);
 }
 
 unsigned int RenderBuffer::id() const {
@@ -38,4 +42,5 @@ unsigned int RenderBuffer::id() const {
 
 void RenderBuffer::unbind() const {
     // TODO Don't forget to unbind!
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
