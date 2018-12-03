@@ -22,7 +22,8 @@ using namespace CS123::GL;
 #include "shape/torus.h"
 
 #include "shape/quad.h"
-
+#include "gl/datatype/FBO.h"
+#include "gl/textures/Texture2D.h"
 ShapesScene::ShapesScene(int width, int height) :
     m_width(width),
     m_height(height)
@@ -37,7 +38,13 @@ ShapesScene::ShapesScene(int width, int height) :
 
     //TODO: [SHAPES] Allocate any additional memory you need...
     m_widget = new Cone();
-    m_tID = 0;
+
+    m_worm = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
+    m_fill = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
+    m_fill2 = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
+    std::cout << m_width << " " << m_height << std::endl;
+    //m_tID = 0;
+
 }
 
 ShapesScene::~ShapesScene()
@@ -73,27 +80,30 @@ void ShapesScene::loadPhongShader() {
     std::string fragmentSource = ResourceLoader::loadResourceFileToString(":/shaders/default.frag");
     m_phongShader = std::make_unique<CS123Shader>(vertexSource, fragmentSource);
 
-    //QImage image("/Users/purvigoel/Desktop/grid.jpg");
-    QImage image(4, 1, QImage::Format_RGBA8888);
-    image.setPixelColor(0, 0, QColor(2, 150, 0, 255)); // 0, 0
-    image.setPixelColor(1, 0, QColor(0, 0, 0, 255));
-    image.setPixelColor(2, 0, QColor(255, 255, 255, 255));
-    image.setPixelColor(3, 0, QColor(255, 0, 255, 255)); // 1 1
+    m_phongShader->setUniform("timer", 5);
 
-    glGenTextures(1, &m_tID); // 0 is the texture ID
-    glBindTexture(GL_TEXTURE_RECTANGLE, m_tID);
+    int sphereNum = 6;
+    QImage image(sphereNum, 1, QImage::Format_RGBA8888);
+    for(int i = 0; i < sphereNum; i++ ){
 
-    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //    image.setColor(i, 0, QColor(i, sin(i) * 255.0, 0));
+    }
 
-    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+    m_image = image;
+//    glGenTextures(1, &m_tID); // 0 is the texture ID
+//    glBindTexture(GL_TEXTURE_RECTANGLE, m_tID);
+
+//    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+//    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
 
 }
 
 
 void ShapesScene::loadWireframeShader() {
-    std::string vertexSource = ResourceLoader::loadResourceFileToString(":/shaders/wireframe.vert");
-    std::string fragmentSource = ResourceLoader::loadResourceFileToString(":/shaders/wireframe.frag");
+    std::string vertexSource = ResourceLoader::loadResourceFileToString(":/shaders/fullscreenquad.vert");
+    std::string fragmentSource = ResourceLoader::loadResourceFileToString(":/shaders/fullscreenquad.frag");
     m_wireframeShader = std::make_unique<Shader>(vertexSource, fragmentSource);
 }
 
@@ -118,17 +128,27 @@ void ShapesScene::render(SupportCanvas3D *context) {
 
     renderPhongPass(context);
 
-    if (settings.drawWireframe) {
-        renderWireframePass(context);
-    }
+//    if (settings.drawWireframe) {
+//        renderWireframePass(context);
+//    }
 
-    if (settings.drawNormals) {
-        renderNormalsPass(context);
-    }
+//    if (settings.drawNormals) {
+//        renderNormalsPass(context);
+//    }
 
 }
 
 void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
+  //  m_worm->bind();
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    m_worm->bind();
+    glViewport(0,0,m_width, m_height);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+
     m_phongShader->bind();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -137,8 +157,61 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     setPhongSceneUniforms();
     setMatrixUniforms(m_phongShader.get(), context);
     renderGeometryAsFilledPolygons();
-
     m_phongShader->unbind();
+
+    m_worm->unbind();
+
+    m_wireframeShader->bind();
+
+    glViewport(0,0,m_width, m_height);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    m_worm->getColorAttachment(0).bind();
+
+    m_fill->bind();
+    m_wireframeShader->bind();
+
+    glViewport(0,0,m_width, m_height);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    setMatrixUniforms(m_wireframeShader.get(), context);
+    m_wireframeShader.get()->setUniform("searchWidth", 15);
+    renderGeometry();
+    m_worm->getColorAttachment(0).unbind();
+
+    m_fill->unbind();
+
+    m_fill2->bind();
+    m_wireframeShader->bind();
+
+    glViewport(0,0,m_width, m_height);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    //shader?
+    m_fill->getColorAttachment(0).bind();
+    setMatrixUniforms(m_wireframeShader.get(), context);
+    m_wireframeShader.get()->setUniform("searchWidth", 15);
+    renderGeometry();
+
+
+
+    m_fill->getColorAttachment(0).unbind();
+    m_fill2->unbind();
+    m_fill2->getColorAttachment(0).bind();
+    setMatrixUniforms(m_wireframeShader.get(), context);
+    m_wireframeShader.get()->setUniform("searchWidth", 15);
+    m_wireframeShader.get()->setUniform("finalFill", 1);
+    renderGeometry();
+
+
+
+    std::cout << "done" << std::endl;
+    //    m_phongShader->unbind();
+
+
 }
 
 void ShapesScene::setPhongSceneUniforms() {
@@ -146,11 +219,38 @@ void ShapesScene::setPhongSceneUniforms() {
     m_phongShader->setUniform("useArrowOffsets", false);
     m_phongShader->applyMaterial(m_material);
 }
-//HERE!
+
+//void ShapesScene::tick(){
+////    int sphereNum = 6;
+
+////    for(int i = 0; i < sphereNum; i++ ){
+////        m_image.setPixelColor(i, 0, QColor(i + 1, sin(i) * 255.0, 0));
+////    }
+
+////    glGenTextures(1, &m_tID); // 0 is the texture ID
+////    glBindTexture(GL_TEXTURE_RECTANGLE, m_tID);
+
+////    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+////    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+////    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, m_image.width(), m_image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_image.bits());
+//}
+
+void ShapesScene::updateShader(int i){
+    std::cout << i << std::endl;
+
+    m_phongShader->bind();
+    m_phongShader->setUniform("timer", i);
+    renderGeometryAsFilledPolygons();
+    m_phongShader->unbind();
+
+}
+
 void ShapesScene::setMatrixUniforms(Shader *shader, SupportCanvas3D *context) {
     shader->setUniform("p", context->getCamera()->getProjectionMatrix());
     shader->setUniform("v", context->getCamera()->getViewMatrix());
     shader->setUniform("m", glm::mat4(1.0f));
+    //m_context = context;
 
 }
 

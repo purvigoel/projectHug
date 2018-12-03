@@ -4,7 +4,7 @@
 #include "OpenGLScene.h"
 
 #include <memory>
-
+#include <QTimer>
 #include <GL/glew.h>
 
 #include "gl/datatype/FBO.h"
@@ -44,6 +44,7 @@ public:
     virtual void render(SupportCanvas3D *context) override;
     virtual void settingsChanged() override;
 
+    virtual void updateShader(int i);
 
 protected:
     // Set the light uniforms for the lights in the scene. (The view matrix is used so that the
@@ -93,7 +94,12 @@ private:
     void changeShapeType();
     GLWidget * m_widget;
     GLuint m_tID;
+    QImage m_image;
+    SupportCanvas3D *m_context;
 
+    std::unique_ptr<FBO> m_worm;
+    std::unique_ptr<FBO> m_fill;
+    std::unique_ptr<FBO> m_fill2;
 };
 
 #endif // SHAPESSCENE_H
