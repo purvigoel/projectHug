@@ -22,6 +22,7 @@ public:
     virtual void settingsChanged() override;
     virtual void render(SupportCanvas3D *context) = 0;
 
+    virtual void updateShader(int i) = 0;
 protected:
 
     void setClearColor();
