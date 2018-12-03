@@ -11,15 +11,17 @@ out vec4 fragColor;
 uniform sampler2DRect tex;
 uniform int useTexture = 0;
 uniform vec2 repeatUV;
-
+const int SPHERENUM = 4;
 uniform mat4 p;
 uniform mat4 v;
 uniform mat4 m;
 
+uniform int timer = 2;
+
 uniform vec2 resolution;
 uniform float time;
 
-const int raytraceDepth = 4;
+const int raytraceDepth = 2;
 const float M_PI = 3.1415926535897932384626433832795;
 
 //void main(){
@@ -91,21 +93,31 @@ struct IntersectInfo{
 };
 
 
-mat4x4[2] makeSpheres(){
-   mat4x4 spheres[2];
-   vec4 pos = texture(tex, vec2(0,0));
+mat4x4[SPHERENUM] makeSpheres(){
+   mat4x4 spheres[SPHERENUM];
    mat4x4 transform = mat4(1.0f);
-   mat4x4 transform2 = mat4x4(1.0, 0.0 , 0.0,0.0,
-                              0.0, 1.0, 0.0,0.0,
-                              0.0, 0.0, 1.0, 0.0,
-                              pos.x * 255.0,0.0,0.0, 1.0);
 
-   spheres[0]= transform;
-   spheres[1]= transform * transform2;
+   for(int i = 0; i < 4; i ++){
+       //vec4 pos = texture(tex, vec2(i,0));
+       mat4x4 scale = mat4x4(1.0, 0.0, 0.0, 0.0,
+                             0.0, 1.0, 0.0, 0.0,
+                             0.0, 0.0, 1.0, 0.0,
+                             0.0, 0.0, 0.0, 1.0);
+       mat4x4 transform2 = mat4x4(1.0, 0.0 , 0.0,0.0,
+                                  0.0, 1.0, 0.0,0.0,
+                                  0.0, 0.0, 1.0, 0.0,
+                                  (float(i) - 1.0f), sin(i + timer), 0.0f, 1.0);
+
+      spheres[i] = transform2 * scale ;
+   }
+
+
+   //spheres[0]= transform;
+  // spheres[1]= transform * transform2;
    return spheres;
 }
 
-IntersectInfo findCollision(mat4x4[2] transforms, int length, vec3 r0, vec3 rd, int fromID){
+IntersectInfo findCollision(mat4x4[SPHERENUM] transforms, int length, vec3 r0, vec3 rd, int fromID){
     float bestT = 1000000;
     IntersectInfo info = IntersectInfo(-1, -1, mat4x4(1.0f));
 
@@ -124,6 +136,20 @@ IntersectInfo findCollision(mat4x4[2] transforms, int length, vec3 r0, vec3 rd, 
         }
     }
     return info;
+}
+
+float sdRoundCone( in vec3 p, in float r1, float r2, float h )
+{
+    vec2 q = vec2( length(p.xz), p.y );
+
+    float b = (r1-r2)/h;
+    float a = sqrt(1.0-b*b);
+    float k = dot(q,vec2(-b,a));
+
+    if( k < 0.0 ) return length(q) - r1;
+    if( k > a*h ) return length(q-vec2(0.0,h)) - r2;
+
+    return dot(q, vec2(a,b) ) - r1;
 }
 
 IntersectInfo findShadowCollision(Sphere[2] spheres, int length, vec3 r0, vec3 rd, int fromID){
@@ -150,8 +176,8 @@ IntersectInfo findShadowCollision(Sphere[2] spheres, int length, vec3 r0, vec3 r
 }
 
 vec4 screenToFilm(){
-    float ratioX = float(gl_FragCoord.x + 0.5)/float(500); // +0.5
-    float ratioY = float(gl_FragCoord.y + 0.5)/float(500); //canvas XY
+    float ratioX = float(gl_FragCoord.x + 0.5)/float(693); // +0.5
+    float ratioY = float(gl_FragCoord.y + 0.5)/float(566); //canvas XY
     float scaleX = ratioX * 2.0f - 1.0f;
     float scaleY = 1.0f - ratioY * 2.0f;
     vec4 screen =  vec4(scaleX, scaleY, -1.0f, 1.0f);
@@ -163,15 +189,17 @@ void main()
     fragColor = vec4(0.5,0.5,0.5, 1);
     float att = 1.0;
 
-    vec3 sphereCenter = vec3(0.0,0.0,0.0);
-    vec3 sphereCenter2 = vec3(2.0,0.0,0.0);
-    mat4x4 spheres[2] = makeSpheres();
+    mat4x4 spheres[SPHERENUM] = makeSpheres();
 
     float sphereRadius = 1.0;
     vec3 rayStart = eye.xyz;
 
     vec3 rayDir = normalize(worldSpace.xyz - eye.xyz);
-    vec3 light = vec3(0, 10, 10);
+
+    // light location
+    vec3 light = vec3(0, 10 + sin(timer), 10 + cos(timer));
+
+
     vec3 lightColorConstant = vec3(1.0,1.0,1.0); // light color
     vec3 objectDiffuse = vec3(1.0,0.0,0.0); // red sphere
     vec3 objectSpecular = vec3(1,1,1);
@@ -187,7 +215,7 @@ void main()
         // generate primary ray
 
         vec3 lightColor = lightColorConstant;
-        IntersectInfo info = findCollision(spheres, 2, rayStart, rayDir, bounceID);
+        IntersectInfo info = findCollision(spheres, SPHERENUM, rayStart, rayDir, bounceID);
 
         float res = info.t;
         bounceID = info.id;
@@ -254,6 +282,6 @@ void main()
         }
 
     }
-    fragColor = vec4(calcColor, 1.0f);
+    fragColor = vec4(calcColor, 1.0f);        
 
 }
