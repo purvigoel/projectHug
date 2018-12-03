@@ -3,6 +3,11 @@
 
 #include "CS123SceneData.h"
 #include "primitiveinfo.h"
+
+
+#include <GL/glew.h>
+
+#include <memory>
 class Camera;
 class CS123ISceneParser;
 
@@ -27,7 +32,7 @@ public:
     void traverseTree(CS123SceneNode *rootNode, glm::mat4x4 parentMat, Scene *toFill);
     std::vector<PrimitiveInfo*> primitiveMaker(std::vector<CS123ScenePrimitive*> pList, glm::mat4x4 pMat, Scene *toFill);
     void lightMaker(CS123ISceneParser *parser, Scene *toFill);
-
+    PrimitiveInfo* copyPrimitive(PrimitiveInfo &scenePrimitive);
 protected:
 
     // Adds a primitive to the scene.
@@ -42,6 +47,7 @@ protected:
     std::vector<PrimitiveInfo*> m_primitiveInfo;
     std::unique_ptr<CS123SceneGlobalData> m_global;
     std::vector<CS123SceneLightData *> m_lightInfo;
+
     int m_count;
 };
 
