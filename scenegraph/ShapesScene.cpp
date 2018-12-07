@@ -111,10 +111,10 @@ void ShapesScene::loadNormalsShader() {
 }
 
 void ShapesScene::loadNormalsArrowShader() {
-    std::string vertexSource = ResourceLoader::loadResourceFileToString(":/shaders/normalsArrow.vert");
-    std::string geometrySource = ResourceLoader::loadResourceFileToString(":/shaders/normalsArrow.gsh");
+    std::string vertexSource = ResourceLoader::loadResourceFileToString(":/shaders/fullscreenquad.vert");
+   // std::string geometrySource = ResourceLoader::loadResourceFileToString(":/shaders/normalsArrow.gsh");
     std::string fragmentSource = ResourceLoader::loadResourceFileToString(":/shaders/normalsArrow.frag");
-    m_normalsArrowShader = std::make_unique<Shader>(vertexSource, geometrySource, fragmentSource);
+    m_normalsArrowShader = std::make_unique<Shader>(vertexSource, fragmentSource);
 }
 
 void ShapesScene::render(SupportCanvas3D *context) {
@@ -173,7 +173,7 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     glClear(GL_DEPTH_BUFFER_BIT);
 
     setMatrixUniforms(m_wireframeShader.get(), context);
-    m_wireframeShader.get()->setUniform("searchWidth", 15);
+    m_wireframeShader.get()->setUniform("searchWidth", 30);
     renderGeometry();
     m_worm->getColorAttachment(0).unbind();
 
@@ -188,7 +188,7 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
 
     m_fill->getColorAttachment(0).bind();
     setMatrixUniforms(m_wireframeShader.get(), context);
-    m_wireframeShader.get()->setUniform("searchWidth",  30);
+    m_wireframeShader.get()->setUniform("searchWidth",  4);
     m_wireframeShader.get()->setUniform("finalFill", 1);
     renderGeometry();
 
@@ -199,8 +199,11 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
 
 
 
-    //m_horizontalBlur->bind();
+
+
     m_wireframeShader->unbind();
+
+    m_horizontalBlur->bind();
 
     m_horizontalBlurShader->bind();
 
@@ -209,10 +212,39 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     glClear(GL_DEPTH_BUFFER_BIT);
     m_fill2->getColorAttachment(0).bind();
     setMatrixUniforms(m_horizontalBlurShader.get(), context);
+    m_horizontalBlurShader.get()->setUniform("speckle", 0);
 
     renderGeometry();
 
     m_fill2->getColorAttachment(0).unbind();
+
+    m_horizontalBlur->unbind();
+
+    m_horizontalBlurShader->unbind();
+    m_normalsArrowShader->bind();
+
+    glViewport(0,0,m_width, m_height);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    m_horizontalBlur->getColorAttachment(0).bind();
+
+    std::vector<BGRA> col;
+    for(int i = 0; i < m_width * m_height; i++){
+       BGRA newCol;
+       col.push_back(newCol);
+    }
+
+    glDrawPixels(m_width, m_height, GL_BGRA, GL_UNSIGNED_BYTE, &col[0]);
+
+
+    setMatrixUniforms(m_normalsArrowShader.get(), context);
+    renderGeometry();
+    m_horizontalBlur->getColorAttachment(0).unbind();
+
+
+
+
+
 
 }
 

@@ -32,7 +32,7 @@ void main(){
 
     fragColor = vec4(0.0);
     vec4 currColor = texture(tex, uv);
-    if(currColor.r != 0.0 && currColor.r != 1.0){
+    if((currColor.r != 0.0 && currColor.r != 1.0) || (currColor.b != 0.0 ) ){
         fragColor = currColor;
     } else {
         int colored = 0;
@@ -50,13 +50,13 @@ void main(){
                 vec2 wh = vec2(texSampleX.x, texSampleY.y);
                 vec4 sampleColor = texture(tex, wh);
 
-                if(sampleColor.r != 0.0 && currColor.r != 1.0 ){
+                if((sampleColor.r != 0.0) || (sampleColor.b != 0.0) ){
                     colored += 1;
                 }
             }
         }
         int area = (supportWidth*2+1) * (supportWidth*2+1);
-        float threshHold = ceil(area/2);
+        float threshHold = floor(area/3);
 
         if(colored >  int(threshHold)){
             fragColor = vec4(1.0, 1.0, 1.0, 1.0);
@@ -68,7 +68,15 @@ void main(){
        if(fragColor.r == 0.0 && fragColor.g == 0.0 && fragColor.b == 0.0){
 
        } else {
+           if(fragColor.r == 0.0){
+               fragColor.r += 0.1;
+           }
+//           float random = fract(sin(dot(uv.xy, vec2(12.9898,78.233))) * 43758.5453);
+//           if(random < 0.25){
+//               fragColor = vec4(0.0,0.0,0.0,1.0);
+//           }
            fragColor = vec4(fragColor.r, fragColor.r, fragColor.r, 1.0);
+
        }
 
    }
