@@ -13,13 +13,13 @@ void main(){
     vec2 size = textureSize(tex,0).xy;
     vec2 texelSize = 1.0/ textureSize(tex,0).xy;
     vec4 currColor = texture(tex, uv);
-    if(currColor.g == 0.0 && currColor.b == 0.0){
-
-        if(gl_FragCoord.y < size.y/3){
-            fragColor = vec4(0.0,1.0,0.0,1.0);
-        } else {
-            fragColor = vec4(0.0,0.0,1.0,1.0);
-        }
+    if((currColor.g == 0.0 && currColor.b == 0.0)|| (currColor.g != 0.0 && currColor.r == 0.0 && currColor.b==0.0)){
+        fragColor = currColor;
+//        if(gl_FragCoord.y < size.y/3){
+//            fragColor = vec4(0.0,1.0,0.0,1.0);
+//        } else {
+//            fragColor = vec4(0.0,0.0,1.0,1.0);
+//        }
     } else {
 //    if(currColor.g != 0.0){
         fragColor = currColor;

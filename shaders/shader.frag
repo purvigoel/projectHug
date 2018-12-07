@@ -263,7 +263,7 @@ mat4x4[SPHERENUM] makeSpheres(){
            transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                          0.0, 1.0, 0.0,0.0,
                                          0.0, 0.0, 1.0, 0.0,
-                                          (0f), -3f, 0.0f, 1.0);
+                                          (0f), -3.8f, 0.0f, 1.0);
 
 
             spheres[13]= transform2 * floorScale;
@@ -375,7 +375,7 @@ void main()
     float globalKD = 1;
     float frac = 1.0;
     int bounceID = -1;
-    for(int bounce = 0; bounce < 2; bounce++){
+    for(int bounce = 0; bounce < 1; bounce++){
         // generate primary ray
 
         vec3 lightColor = lightColorConstant;
@@ -404,6 +404,16 @@ void main()
 
 //            // CALCULATE DIFFUSE
             float norm = max(0.0f, dot(normalWS, fromLightDir));
+            if(bounceID == 13){
+                calcColor.b = 0.0;
+                objectDiffuse = vec3(0.0,1.0,0.0); // the ground is green
+                objectSpecular = vec3(0.0,0.0,0.0);
+
+            } else {
+                objectDiffuse = vec3(1.0,0.0,0.0);
+                objectSpecular = vec3(1.0,1.0,1.0);
+
+            }
             float rVal = globalKD * lightColor.x * (objectDiffuse.x * norm);
             float gVal = globalKD *lightColor.y * (objectDiffuse.y * norm);
             float bVal = globalKD *lightColor.z * (objectDiffuse.z * norm);

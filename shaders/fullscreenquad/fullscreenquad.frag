@@ -32,7 +32,7 @@ void main(){
 
     fragColor = vec4(0.0);
     vec4 currColor = texture(tex, uv);
-    if((currColor.r != 0.0 && currColor.r != 1.0) || (currColor.b != 0.0 ) ){
+    if((currColor.r != 0.0 && currColor.r != 1.0) || (currColor.b != 0.0 ) || currColor.g != 0.0){
         fragColor = currColor;
     } else {
         int colored = 0;
@@ -65,7 +65,7 @@ void main(){
         }
    }
    if(finalFill == 1){
-       if(fragColor.r == 0.0 && fragColor.g == 0.0 && fragColor.b == 0.0){
+       if((fragColor.r == 0.0 && fragColor.g == 0.0 && fragColor.b == 0.0) || (fragColor.g != 0.0 && fragColor.r == 0.0 && fragColor.b == 0.0)){
 
        } else {
            if(fragColor.r == 0.0){

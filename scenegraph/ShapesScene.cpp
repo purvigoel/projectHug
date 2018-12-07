@@ -140,7 +140,7 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     glClear(GL_DEPTH_BUFFER_BIT);
 
     m_worm->bind();
-    //glViewport(0,0,m_width, m_height);
+   //glViewport(0,0,m_width, m_height);
     glClear(GL_COLOR_BUFFER_BIT);
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -228,21 +228,11 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     glClear(GL_DEPTH_BUFFER_BIT);
     m_horizontalBlur->getColorAttachment(0).bind();
 
-    std::vector<BGRA> col;
-    for(int i = 0; i < m_width * m_height; i++){
-       BGRA newCol;
-       col.push_back(newCol);
-    }
-
-    glDrawPixels(m_width, m_height, GL_BGRA, GL_UNSIGNED_BYTE, &col[0]);
 
 
     setMatrixUniforms(m_normalsArrowShader.get(), context);
     renderGeometry();
     m_horizontalBlur->getColorAttachment(0).unbind();
-
-
-
 
 
 
