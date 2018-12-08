@@ -321,6 +321,7 @@ void Shader::addUniformArray(const std::string &name, size_t size) {
 }
 
 void Shader::addTexture(const std::string &name) {
+
     GLint location = glGetUniformLocation(m_programID, name.c_str());
     m_textureLocations[name] = location;
     GLint slot = m_textureSlots.size();

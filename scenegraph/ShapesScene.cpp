@@ -45,6 +45,7 @@ ShapesScene::ShapesScene(int width, int height) :
     m_fill2 = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
     m_horizontalBlur = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
     std::cout << m_width << " " << m_height << std::endl;
+    setUpImage();
     //m_tID = 0;
 
 }
@@ -226,16 +227,42 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     glViewport(0,0,m_width, m_height);
     glClear(GL_COLOR_BUFFER_BIT);
     glClear(GL_DEPTH_BUFFER_BIT);
+
     m_horizontalBlur->getColorAttachment(0).bind();
 
 
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, newHandle);
+    //3 is the uniform location. obviously, do better.
+    glUniform1i(GLint(3),1);
 
     setMatrixUniforms(m_normalsArrowShader.get(), context);
     renderGeometry();
     m_horizontalBlur->getColorAttachment(0).unbind();
 
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_2D, 0);
+//   glActiveTexture(GL_TEXTURE1);
+//    glBindTexture(GL_TEXTURE_2D, 0);
 
+   glActiveTexture(GL_TEXTURE0);
+}
 
+void ShapesScene::setUpImage(){
+//    QImage image(sphereNum, 1, QImage::Format_RGBA8888);
+
+//    m_image = image;
+    QImage *image = new QImage();
+    bool isLoaded = image->load("/home/pgoel2/course/cs1230/projects/tiger.png");
+    std::cout << "is loaded" << isLoaded << std::endl;
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glGenTextures(1, &newHandle);
+    glBindTexture(GL_TEXTURE_2D, newHandle);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width(), image->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image->bits());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
 void ShapesScene::setPhongSceneUniforms() {

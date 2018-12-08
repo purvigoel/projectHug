@@ -18,6 +18,7 @@ Texture2D::Texture2D(unsigned char *data, int width, int height, GLenum type)
     unbind();
 }
 
+
 void Texture2D::bind() const {
     // TODO [Task 2]
     glBindTexture(GL_TEXTURE_2D, m_handle);

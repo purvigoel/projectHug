@@ -93,8 +93,11 @@ private:
 
     void changeShapeParameter();
     void changeShapeType();
+
+    void setUpImage();
     GLWidget * m_widget;
     GLuint m_tID;
+    GLuint newHandle;
     QImage m_image;
     SupportCanvas3D *m_context;
 

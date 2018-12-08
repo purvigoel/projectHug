@@ -11,7 +11,7 @@ out vec4 fragColor;
 uniform sampler2DRect tex;
 uniform int useTexture = 0;
 uniform vec2 repeatUV;
-const int SPHERENUM = 14;
+const int SPHERENUM = 15;
 uniform mat4 p;
 uniform mat4 v;
 uniform mat4 m;
@@ -234,7 +234,7 @@ mat4x4[SPHERENUM] makeSpheres(){
          transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                        0.0, 1.0, 0.0,0.0,
                                        0.0, 0.0, 1.0, 0.0,
-                                        (3.8f), -0.8f, 0.0f, 1.0);
+                                        (3.8f), -0.6f, 0.0f, 1.0);
 
 
           spheres[11]= transform2 * tailScale2;
@@ -248,7 +248,7 @@ mat4x4[SPHERENUM] makeSpheres(){
           transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                         0.0, 1.0, 0.0,0.0,
                                         0.0, 0.0, 1.0, 0.0,
-                                         (4.0f), -1.2f, 0.0f, 1.0);
+                                         (4.0f), -0.8f, 0.0f, 1.0);
 
 
            spheres[12]= transform2 * tailScale3;
@@ -268,6 +268,19 @@ mat4x4[SPHERENUM] makeSpheres(){
 
             spheres[13]= transform2 * floorScale;
 
+            mat4x4 muzzle = mat4x4(0.65, 0.0, 0.0, 0.0,
+                                     0.0, 0.65, 0.0, 0.0,
+                                     0.0, 0.0, 0.65, 0.0,
+                                     0.0, 0.0, 0.0, 1.0);
+
+
+            transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+                                          0.0, 1.0, 0.0,0.0,
+                                          0.0, 0.0, 1.0, 0.0,
+                                           (-1.9f), -0.75f, 0.0f, 1.0);
+
+
+             spheres[14]= transform2 * muzzle;
 
            for(int i = 0; i < SPHERENUM; i ++){
                transform2 = mat4x4(1, 0.0 , 0.0,0.0,

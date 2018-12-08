@@ -16,9 +16,9 @@ public:
     virtual void bind() const = 0;
     unsigned int id() const;
     virtual void unbind() const = 0;
-
-protected:
     unsigned int m_handle;
+protected:
+
 };
 
 }}

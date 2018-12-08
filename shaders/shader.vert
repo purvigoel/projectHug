@@ -87,11 +87,11 @@ uniform bool useArrowOffsets; // True if rendering the arrowhead of a normal for
 
 void main() {
     //used to transform the camera
-       // mat4x4 timertransform = mat4x4(1.0);
-        mat4x4 timertransform = mat4x4(1, 0, 0, 0,
-                   0 , 1, 0, 0,
-                   0, 0, 1, 0,
-                 sin(float(timer/10.0)), 0, 0, 1);
+        mat4x4 timertransform = mat4x4(1.0);
+//        mat4x4 timertransform = mat4x4(1, 0, 0, 0,
+//                   0 , 1, 0, 0,
+//                   0, 0, 1, 0,
+//                 sin(float(timer/10.0)), 0, 0, 1);
 
         vec4 position_cameraSpace = timertransform * v * m * vec4(position, 1.0);
         vec4 normal_cameraSpace = vec4(normalize(mat3(transpose(inverse(timertransform * v * m))) * normal), 0);
