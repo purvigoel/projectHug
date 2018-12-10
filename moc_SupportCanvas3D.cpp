@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'SupportCanvas3D.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.2.0)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'SupportCanvas3D.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.2.0. It"
+#error "This file was generated using the moc from 5.7.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,30 +20,31 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_SupportCanvas3D_t {
     QByteArrayData data[15];
-    char stringdata[260];
+    char stringdata0[259];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_SupportCanvas3D_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_SupportCanvas3D_t, stringdata0) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_SupportCanvas3D_t qt_meta_stringdata_SupportCanvas3D = {
     {
-QT_MOC_LITERAL(0, 0, 15),
-QT_MOC_LITERAL(1, 16, 18),
-QT_MOC_LITERAL(2, 35, 0),
-QT_MOC_LITERAL(3, 36, 13),
-QT_MOC_LITERAL(4, 50, 14),
-QT_MOC_LITERAL(5, 65, 14),
-QT_MOC_LITERAL(6, 80, 14),
-QT_MOC_LITERAL(7, 95, 20),
-QT_MOC_LITERAL(8, 116, 23),
-QT_MOC_LITERAL(9, 140, 23),
-QT_MOC_LITERAL(10, 164, 21),
-QT_MOC_LITERAL(11, 186, 21),
-QT_MOC_LITERAL(12, 208, 21),
-QT_MOC_LITERAL(13, 230, 16),
-QT_MOC_LITERAL(14, 247, 11)
+QT_MOC_LITERAL(0, 0, 15), // "SupportCanvas3D"
+QT_MOC_LITERAL(1, 16, 18), // "aspectRatioChanged"
+QT_MOC_LITERAL(2, 35, 0), // ""
+QT_MOC_LITERAL(3, 36, 13), // "resetUpVector"
+QT_MOC_LITERAL(4, 50, 14), // "setCameraAxisX"
+QT_MOC_LITERAL(5, 65, 14), // "setCameraAxisY"
+QT_MOC_LITERAL(6, 80, 14), // "setCameraAxisZ"
+QT_MOC_LITERAL(7, 95, 20), // "setCameraAxonometric"
+QT_MOC_LITERAL(8, 116, 23), // "updateCameraHeightAngle"
+QT_MOC_LITERAL(9, 140, 23), // "updateCameraTranslation"
+QT_MOC_LITERAL(10, 164, 21), // "updateCameraRotationU"
+QT_MOC_LITERAL(11, 186, 21), // "updateCameraRotationV"
+QT_MOC_LITERAL(12, 208, 21), // "updateCameraRotationN"
+QT_MOC_LITERAL(13, 230, 16), // "updateCameraClip"
+QT_MOC_LITERAL(14, 247, 11) // "updateImage"
+
     },
     "SupportCanvas3D\0aspectRatioChanged\0\0"
     "resetUpVector\0setCameraAxisX\0"
@@ -51,7 +52,7 @@ QT_MOC_LITERAL(14, 247, 11)
     "setCameraAxonometric\0updateCameraHeightAngle\0"
     "updateCameraTranslation\0updateCameraRotationU\0"
     "updateCameraRotationV\0updateCameraRotationN\0"
-    "updateCameraClip\0updateImage\0"
+    "updateCameraClip\0updateImage"
 };
 #undef QT_MOC_LITERAL
 
@@ -69,21 +70,21 @@ static const uint qt_meta_data_SupportCanvas3D[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,   79,    2, 0x06,
+       1,    0,   79,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       3,    0,   80,    2, 0x0a,
-       4,    0,   81,    2, 0x0a,
-       5,    0,   82,    2, 0x0a,
-       6,    0,   83,    2, 0x0a,
-       7,    0,   84,    2, 0x0a,
-       8,    0,   85,    2, 0x0a,
-       9,    0,   86,    2, 0x0a,
-      10,    0,   87,    2, 0x0a,
-      11,    0,   88,    2, 0x0a,
-      12,    0,   89,    2, 0x0a,
-      13,    0,   90,    2, 0x0a,
-      14,    0,   91,    2, 0x0a,
+       3,    0,   80,    2, 0x0a /* Public */,
+       4,    0,   81,    2, 0x0a /* Public */,
+       5,    0,   82,    2, 0x0a /* Public */,
+       6,    0,   83,    2, 0x0a /* Public */,
+       7,    0,   84,    2, 0x0a /* Public */,
+       8,    0,   85,    2, 0x0a /* Public */,
+       9,    0,   86,    2, 0x0a /* Public */,
+      10,    0,   87,    2, 0x0a /* Public */,
+      11,    0,   88,    2, 0x0a /* Public */,
+      12,    0,   89,    2, 0x0a /* Public */,
+      13,    0,   90,    2, 0x0a /* Public */,
+      14,    0,   91,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -109,6 +110,7 @@ void SupportCanvas3D::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
         SupportCanvas3D *_t = static_cast<SupportCanvas3D *>(_o);
+        Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->aspectRatioChanged(); break;
         case 1: _t->resetUpVector(); break;
@@ -132,6 +134,7 @@ void SupportCanvas3D::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
             typedef void (SupportCanvas3D::*_t)();
             if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&SupportCanvas3D::aspectRatioChanged)) {
                 *result = 0;
+                return;
             }
         }
     }
@@ -140,7 +143,7 @@ void SupportCanvas3D::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
 
 const QMetaObject SupportCanvas3D::staticMetaObject = {
     { &QGLWidget::staticMetaObject, qt_meta_stringdata_SupportCanvas3D.data,
-      qt_meta_data_SupportCanvas3D,  qt_static_metacall, 0, 0}
+      qt_meta_data_SupportCanvas3D,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
 };
 
 
@@ -151,8 +154,8 @@ const QMetaObject *SupportCanvas3D::metaObject() const
 
 void *SupportCanvas3D::qt_metacast(const char *_clname)
 {
-    if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_SupportCanvas3D.stringdata))
+    if (!_clname) return Q_NULLPTR;
+    if (!strcmp(_clname, qt_meta_stringdata_SupportCanvas3D.stringdata0))
         return static_cast<void*>(const_cast< SupportCanvas3D*>(this));
     return QGLWidget::qt_metacast(_clname);
 }
@@ -177,6 +180,6 @@ int SupportCanvas3D::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 // SIGNAL 0
 void SupportCanvas3D::aspectRatioChanged()
 {
-    QMetaObject::activate(this, &staticMetaObject, 0, 0);
+    QMetaObject::activate(this, &staticMetaObject, 0, Q_NULLPTR);
 }
 QT_END_MOC_NAMESPACE

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'SupportCanvas2D.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.2.0)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'SupportCanvas2D.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.2.0. It"
+#error "This file was generated using the moc from 5.7.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,21 +20,22 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_SupportCanvas2D_t {
     QByteArrayData data[4];
-    char stringdata[41];
+    char stringdata0[40];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_SupportCanvas2D_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_SupportCanvas2D_t, stringdata0) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_SupportCanvas2D_t qt_meta_stringdata_SupportCanvas2D = {
     {
-QT_MOC_LITERAL(0, 0, 15),
-QT_MOC_LITERAL(1, 16, 11),
-QT_MOC_LITERAL(2, 28, 0),
-QT_MOC_LITERAL(3, 29, 10)
+QT_MOC_LITERAL(0, 0, 15), // "SupportCanvas2D"
+QT_MOC_LITERAL(1, 16, 11), // "revertImage"
+QT_MOC_LITERAL(2, 28, 0), // ""
+QT_MOC_LITERAL(3, 29, 10) // "clearImage"
+
     },
-    "SupportCanvas2D\0revertImage\0\0clearImage\0"
+    "SupportCanvas2D\0revertImage\0\0clearImage"
 };
 #undef QT_MOC_LITERAL
 
@@ -52,8 +53,8 @@ static const uint qt_meta_data_SupportCanvas2D[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   24,    2, 0x0a,
-       3,    0,   25,    2, 0x0a,
+       1,    0,   24,    2, 0x0a /* Public */,
+       3,    0,   25,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Bool,
@@ -66,6 +67,7 @@ void SupportCanvas2D::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
         SupportCanvas2D *_t = static_cast<SupportCanvas2D *>(_o);
+        Q_UNUSED(_t)
         switch (_id) {
         case 0: { bool _r = _t->revertImage();
             if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = _r; }  break;
@@ -77,7 +79,7 @@ void SupportCanvas2D::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
 
 const QMetaObject SupportCanvas2D::staticMetaObject = {
     { &QWidget::staticMetaObject, qt_meta_stringdata_SupportCanvas2D.data,
-      qt_meta_data_SupportCanvas2D,  qt_static_metacall, 0, 0}
+      qt_meta_data_SupportCanvas2D,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
 };
 
 
@@ -88,8 +90,8 @@ const QMetaObject *SupportCanvas2D::metaObject() const
 
 void *SupportCanvas2D::qt_metacast(const char *_clname)
 {
-    if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_SupportCanvas2D.stringdata))
+    if (!_clname) return Q_NULLPTR;
+    if (!strcmp(_clname, qt_meta_stringdata_SupportCanvas2D.stringdata0))
         return static_cast<void*>(const_cast< SupportCanvas2D*>(this));
     return QWidget::qt_metacast(_clname);
 }

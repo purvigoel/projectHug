@@ -23,7 +23,6 @@ SupportCanvas3D::SupportCanvas3D(QGLFormat format, QWidget *parent) : QGLWidget(
     m_defaultOrbitingCamera(new OrbitingCamera()),
     m_currentScene(nullptr)
 {
-
     //setUpImage();
     m_timer = new QTimer(this);
     QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(updateImage()) );

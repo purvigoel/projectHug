@@ -40,10 +40,14 @@ ShapesScene::ShapesScene(int width, int height) :
     //TODO: [SHAPES] Allocate any additional memory you need...
     m_widget = new Cone();
 
-    m_worm = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
-    m_fill = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
-    m_fill2 = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
-    m_horizontalBlur = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
+    m_worm = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height,
+                                   TextureParameters::WRAP_METHOD::CLAMP_TO_EDGE);
+    m_fill = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height,
+                                   TextureParameters::WRAP_METHOD::CLAMP_TO_EDGE);
+    m_fill2 = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height,
+                                    TextureParameters::WRAP_METHOD::CLAMP_TO_EDGE);
+    m_horizontalBlur = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height,
+                                             TextureParameters::WRAP_METHOD::CLAMP_TO_EDGE);
     std::cout << m_width << " " << m_height << std::endl;
     //m_tID = 0;
 
@@ -136,103 +140,99 @@ void ShapesScene::render(SupportCanvas3D *context) {
 
 void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
   //  m_worm->bind();
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    m_worm->bind();
-   //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-
-    m_phongShader->bind();
-
+//    m_worm->bind();
+    glViewport(0,0,m_width, m_height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    m_phongShader->bind();
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     clearLights();
     setLights(context->getCamera()->getViewMatrix());
     setPhongSceneUniforms();
     setMatrixUniforms(m_phongShader.get(), context);
+//    m_phongShader.get()->setUniform("customV", context->getCamera()->getProjectionMatrix());
     renderGeometryAsFilledPolygons();
     m_phongShader->unbind();
 
-    m_worm->unbind();
+//    m_worm->unbind();
 
-    m_wireframeShader->bind();
+//    m_wireframeShader->bind();
 
-    //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+//    //glViewport(0,0,m_width, m_height);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT);
 
-    m_worm->getColorAttachment(0).bind();
+//    m_worm->getColorAttachment(0).bind();
 
-    m_fill->bind();
-    m_wireframeShader->bind();
+//    m_fill->bind();
+//    m_wireframeShader->bind();
 
-    //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+//    //glViewport(0,0,m_width, m_height);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT);
 
-    setMatrixUniforms(m_wireframeShader.get(), context);
-    m_wireframeShader.get()->setUniform("searchWidth", 30);
-    renderGeometry();
-    m_worm->getColorAttachment(0).unbind();
+//    setMatrixUniforms(m_wireframeShader.get(), context);
+//    m_wireframeShader.get()->setUniform("searchWidth", 30);
+//    renderGeometry();
+//    m_worm->getColorAttachment(0).unbind();
 
-    m_fill->unbind();
+//    m_fill->unbind();
 
-    m_fill2->bind();
-    m_wireframeShader->bind();
+//    m_fill2->bind();
+//    m_wireframeShader->bind();
 
-    //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+//    //glViewport(0,0,m_width, m_height);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT);
 
-    m_fill->getColorAttachment(0).bind();
-    setMatrixUniforms(m_wireframeShader.get(), context);
-    m_wireframeShader.get()->setUniform("searchWidth",  4);
-    m_wireframeShader.get()->setUniform("finalFill", 1);
-    renderGeometry();
-
-
-
-    m_fill->getColorAttachment(0).unbind();
-    m_fill2->unbind();
+//    m_fill->getColorAttachment(0).bind();
+//    setMatrixUniforms(m_wireframeShader.get(), context);
+//    m_wireframeShader.get()->setUniform("searchWidth",  4);
+//    m_wireframeShader.get()->setUniform("finalFill", 1);
+//    renderGeometry();
 
 
 
-
-
-    m_wireframeShader->unbind();
-
-    m_horizontalBlur->bind();
-
-    m_horizontalBlurShader->bind();
-
-    //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
-    m_fill2->getColorAttachment(0).bind();
-    setMatrixUniforms(m_horizontalBlurShader.get(), context);
-    m_horizontalBlurShader.get()->setUniform("speckle", 0);
-
-    renderGeometry();
-
-    m_fill2->getColorAttachment(0).unbind();
-
-    m_horizontalBlur->unbind();
-
-    m_horizontalBlurShader->unbind();
-    m_normalsArrowShader->bind();
-
-    glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
-    m_horizontalBlur->getColorAttachment(0).bind();
+//    m_fill->getColorAttachment(0).unbind();
+//    m_fill2->unbind();
 
 
 
-    setMatrixUniforms(m_normalsArrowShader.get(), context);
-    renderGeometry();
-    m_horizontalBlur->getColorAttachment(0).unbind();
+
+
+//    m_wireframeShader->unbind();
+
+//    m_horizontalBlur->bind();
+
+//    m_horizontalBlurShader->bind();
+
+//    //glViewport(0,0,m_width, m_height);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT);
+//    m_fill2->getColorAttachment(0).bind();
+//    setMatrixUniforms(m_horizontalBlurShader.get(), context);
+//    m_horizontalBlurShader.get()->setUniform("speckle", 0);
+
+//    renderGeometry();
+
+//    m_fill2->getColorAttachment(0).unbind();
+
+//    m_horizontalBlur->unbind();
+
+//    m_horizontalBlurShader->unbind();
+//    m_normalsArrowShader->bind();
+
+//    glViewport(0,0,m_width, m_height);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT);
+//    m_horizontalBlur->getColorAttachment(0).bind();
+
+
+
+//    setMatrixUniforms(m_normalsArrowShader.get(), context);
+//    renderGeometry();
+//    m_horizontalBlur->getColorAttachment(0).unbind();
 
 
 
