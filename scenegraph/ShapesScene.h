@@ -95,9 +95,11 @@ private:
     void changeShapeType();
 
     void setUpImage();
+    void setUpDensityImage();
     GLWidget * m_widget;
     GLuint m_tID;
     GLuint newHandle;
+    GLuint densityHandle;
     QImage m_image;
     SupportCanvas3D *m_context;
 
@@ -105,6 +107,7 @@ private:
     std::unique_ptr<FBO> m_fill;
     std::unique_ptr<FBO> m_fill2;
     std::unique_ptr<FBO> m_horizontalBlur;
+    int m_renderTimes;
 };
 
 #endif // SHAPESSCENE_H

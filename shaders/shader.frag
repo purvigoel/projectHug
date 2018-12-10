@@ -31,7 +31,7 @@ const float M_PI = 3.1415926535897932384626433832795;
 //    fragColor = vec4(0.5,0.5,0.5, 1);
 //}
 
-float raySphereIntersect(vec3 r0, vec3 rd, vec3 s0, float sr) {
+float raySphereIntersect(vec3 origin, vec3 dir, float radius) {
     // - r0: ray origin
     // - rd: normalized ray direction
     // - s0: sphere center
@@ -40,17 +40,16 @@ float raySphereIntersect(vec3 r0, vec3 rd, vec3 s0, float sr) {
     //   or -1.0 if no intersection.
 
     //CONVERT r0 and rD to object space
-    float a = dot(rd, rd);
-    vec3 s0_r0 = r0 - s0;
-    float b = 2.0 * dot(rd, s0_r0);
-    float c = dot(s0_r0, s0_r0) - (sr * sr);
+    float a = dot(dir, dir);
+    float b = 2.0 * dot(dir, origin);
+    float c = dot(origin, origin) - (radius * radius);
     if (b*b - 4.0*a*c < 0.0) {
         return -1.0;
     }
     float t1 = (-b - sqrt((b*b) - 4.0*a*c))/(2.0*a);
     float t2= (-b + sqrt((b*b) - 4.0*a*c))/(2.0*a);
-    vec3 option1 = r0 + t1*rd;
-    vec3 option2 = r0 + t2*rd;
+    vec3 option1 = origin + t1*dir;
+    vec3 option2 = origin + t2*dir;
     float best = 100;
     if(t1 > 0 && option1.y < 0.5 && option1.y > -0.5){
         best = t1;
@@ -93,7 +92,7 @@ struct IntersectInfo{
 };
 
 
-mat4x4[SPHERENUM] makeSpheres(){
+mat4x4[SPHERENUM] makeSpheres(int timer){
    mat4x4 spheres[SPHERENUM];
    mat4x4 transform = mat4(1.0f);
 
@@ -254,19 +253,19 @@ mat4x4[SPHERENUM] makeSpheres(){
            spheres[12]= transform2 * tailScale3;
 
 
-           mat4x4 floorScale = mat4x4(10, 0.0, 0.0, 0.0,
-                                    0.0, 1, 0.0, 0.0,
-                                    0.0, 0.0, 1, 0.0,
+           mat4x4 eyeScale = mat4x4(0.15, 0.0, 0.0, 0.0,
+                                    0.0, 0.15, 0.0, 0.0,
+                                    0.0, 0.0, 0.15, 0.0,
                                     0.0, 0.0, 0.0, 1.0);
 
 
            transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                          0.0, 1.0, 0.0,0.0,
                                          0.0, 0.0, 1.0, 0.0,
-                                          (0f), -3.8f, 0.0f, 1.0);
+                                          (-1.9f), -0.2f, 0.0f, 1.0);
 
 
-            spheres[13]= transform2 * floorScale;
+            spheres[13]= transform2 * eyeScale;
 
             mat4x4 muzzle = mat4x4(0.65, 0.0, 0.0, 0.0,
                                      0.0, 0.65, 0.0, 0.0,
@@ -303,9 +302,9 @@ IntersectInfo findCollision(mat4x4[SPHERENUM] transforms, int length, vec3 r0, v
         if(fromID == i){
             continue;
         }
-        float currT = raySphereIntersect((inverse(modelMat) * vec4(r0,1.0)).xyz, normalize((inverse(modelMat) * vec4(rd,0.0))).xyz, vec3(0,0,0), 0.5);
+        float currT = raySphereIntersect((inverse(modelMat) * vec4(r0,1.0)).xyz, normalize((inverse(modelMat) * vec4(rd,0.0))).xyz, 0.5);
 
-        if(currT != -1 && currT < bestT && (fromID != i)  ){
+        if(currT != -1 && currT <= bestT && (fromID != i)  ){
             bestT = currT;
             info.id = i;
             info.t = currT;
@@ -340,7 +339,7 @@ IntersectInfo findShadowCollision(Sphere[2] spheres, int length, vec3 r0, vec3 r
         if(i == 1){
             currSphere = spheres[1];
         }
-        float currT = raySphereIntersect((inverse(currSphere.modelMat) * vec4(r0,1.0)).xyz, normalize((inverse(currSphere.modelMat) * vec4(rd,0.0)).xyz), currSphere.sphereCenter, 0.5);
+        float currT = raySphereIntersect((inverse(currSphere.modelMat) * vec4(r0,1.0)).xyz, normalize((inverse(currSphere.modelMat) * vec4(rd,0.0)).xyz), 0.5);
 
         if(currT != -1  && (fromID != currSphere.id || abs(currT) > 1.01) ){
             bestT = currT;
@@ -366,7 +365,7 @@ void main()
     fragColor = vec4(0.5,0.5,0.5, 1);
     float att = 1.0;
 
-    mat4x4 spheres[SPHERENUM] = makeSpheres();
+    mat4x4 spheres[SPHERENUM] = makeSpheres(timer);
 
     float sphereRadius = 1.0;
     vec3 rayStart = eye.xyz;
@@ -374,7 +373,7 @@ void main()
     vec3 rayDir = normalize(worldSpace.xyz - eye.xyz);
 
     // light location
-    vec3 light = vec3(0  + 10 * cos(timer/15.0), 0 + sin(timer), -5 + cos(timer));
+    vec3 light = vec3( 10 * cos(timer/15.0), 0 + sin(timer), -5 + cos(timer));
 
 
     vec3 lightColorConstant = vec3(1.0,1.0,1.0); // light color

@@ -46,7 +46,8 @@ ShapesScene::ShapesScene(int width, int height) :
     m_horizontalBlur = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
     std::cout << m_width << " " << m_height << std::endl;
     setUpImage();
-    //m_tID = 0;
+    //setUpDensityImage();
+    m_renderTimes = 0;
 
 }
 
@@ -137,6 +138,7 @@ void ShapesScene::render(SupportCanvas3D *context) {
 
 void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
   //  m_worm->bind();
+
     glClear(GL_COLOR_BUFFER_BIT);
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -230,10 +232,12 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, newHandle);
-    //3 is the uniform location. obviously, do better.
     GLint secondTextureLocation = m_normalsArrowShader->getTextureLocation("texture2");
     glUniform1i(secondTextureLocation,1);
 
+
+    m_normalsArrowShader->setUniform("timer", m_renderTimes);
+    m_renderTimes +=1;
     setMatrixUniforms(m_normalsArrowShader.get(), context);
     renderGeometry();
     m_horizontalBlur->getColorAttachment(0).unbind();
@@ -242,15 +246,27 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
 }
 
 void ShapesScene::setUpImage(){
-//    QImage image(sphereNum, 1, QImage::Format_RGBA8888);
-
-//    m_image = image;
     QImage *image = new QImage();
     bool isLoaded = image->load("/home/pgoel2/course/cs1230/projects/tiger.png");
-    std::cout << "isloaded" << isLoaded << std::endl;
     glActiveTexture(GL_TEXTURE0 + 1);
     glGenTextures(1, &newHandle);
     glBindTexture(GL_TEXTURE_2D, newHandle);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width(), image->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image->bits());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glActiveTexture(GL_TEXTURE0);
+}
+
+void ShapesScene::setUpDensityImage(){
+    QImage *image = new QImage();
+    bool isLoaded = image->load("/course/cs123/data/image/chessboard.png");
+    std::cout << "density is loaded" << isLoaded << std::endl;
+    glActiveTexture(GL_TEXTURE0 + 2);
+    glGenTextures(1, &densityHandle);
+    glBindTexture(GL_TEXTURE_2D, densityHandle);
+    std::cout << "densityhandle" << densityHandle << std::endl;
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width(), image->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image->bits());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -272,6 +288,7 @@ void ShapesScene::updateShader(int i){
     m_phongShader->setUniform("timer", i);
     renderGeometryAsFilledPolygons();
     m_phongShader->unbind();
+
 
 }
 

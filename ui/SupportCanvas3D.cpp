@@ -27,7 +27,7 @@ SupportCanvas3D::SupportCanvas3D(QGLFormat format, QWidget *parent) : QGLWidget(
     //setUpImage();
     m_timer = new QTimer(this);
     QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(updateImage()) );
-    m_timer->start(200);
+    m_timer->start(125);
     m_tick = 0;
 }
 
