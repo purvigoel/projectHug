@@ -26,4 +26,6 @@ void main() {
     uv = inUV;
 	vec4 position_cameraSpace = v * m * vec4(position, 1.0);
     gl_Position = p * position_cameraSpace;
+
+    gl_Position = vec4(position, 1.0);
 }

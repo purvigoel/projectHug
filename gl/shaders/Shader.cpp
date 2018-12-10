@@ -320,10 +320,15 @@ void Shader::addUniformArray(const std::string &name, size_t size) {
     }
 }
 
+GLint Shader::getTextureLocation(const std::string &name){
+    return m_textureLocations[name];
+}
+
 void Shader::addTexture(const std::string &name) {
 
     GLint location = glGetUniformLocation(m_programID, name.c_str());
     m_textureLocations[name] = location;
+    std::cout << name << location << std::endl;
     GLint slot = m_textureSlots.size();
     m_textureSlots[location] = slot; // Assign slots in increasing order.
 }

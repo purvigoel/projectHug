@@ -199,9 +199,6 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     m_fill2->unbind();
 
 
-
-
-
     m_wireframeShader->unbind();
 
     m_horizontalBlur->bind();
@@ -234,18 +231,14 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, newHandle);
     //3 is the uniform location. obviously, do better.
-    glUniform1i(GLint(3),1);
+    GLint secondTextureLocation = m_normalsArrowShader->getTextureLocation("texture2");
+    glUniform1i(secondTextureLocation,1);
 
     setMatrixUniforms(m_normalsArrowShader.get(), context);
     renderGeometry();
     m_horizontalBlur->getColorAttachment(0).unbind();
 
-//    glActiveTexture(GL_TEXTURE0);
-//    glBindTexture(GL_TEXTURE_2D, 0);
-//   glActiveTexture(GL_TEXTURE1);
-//    glBindTexture(GL_TEXTURE_2D, 0);
-
-   glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void ShapesScene::setUpImage(){
@@ -254,7 +247,7 @@ void ShapesScene::setUpImage(){
 //    m_image = image;
     QImage *image = new QImage();
     bool isLoaded = image->load("/home/pgoel2/course/cs1230/projects/tiger.png");
-    std::cout << "is loaded" << isLoaded << std::endl;
+    std::cout << "isloaded" << isLoaded << std::endl;
     glActiveTexture(GL_TEXTURE0 + 1);
     glGenTextures(1, &newHandle);
     glBindTexture(GL_TEXTURE_2D, newHandle);
@@ -263,6 +256,7 @@ void ShapesScene::setUpImage(){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void ShapesScene::setPhongSceneUniforms() {

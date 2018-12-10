@@ -101,6 +101,7 @@ void main() {
         vec4 normal_worldSpace = vec4(normalize(mat3(transpose(inverse(m))) * normal), 0);
         gl_Position = p * position_cameraSpace;
 
+        gl_Position = vec4(position, 1.0);
         eye = inverse(v) * vec4(0,0,0,1);
         cam = timertransform * v * m;
         texc = texCoord;

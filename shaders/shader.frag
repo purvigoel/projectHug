@@ -286,7 +286,7 @@ mat4x4[SPHERENUM] makeSpheres(){
                transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                              0.0, 1.0, 0.0,0.0,
                                              0.0, 0.0, 1.0, 0.0,
-                                              (-1.0f), sin( float(timer))/10.0, 0.0f, 1.0);
+                                              (-1.0f), sin( float(timer))/10.0, -10.0f, 1.0);
 
                spheres[i] = spineScale*spheres[i];
                spheres[i] = transform2*spheres[i];
@@ -374,7 +374,7 @@ void main()
     vec3 rayDir = normalize(worldSpace.xyz - eye.xyz);
 
     // light location
-    vec3 light = vec3(0  + 10 * cos(timer/15.0), 10 + sin(timer), 10 + cos(timer));
+    vec3 light = vec3(0  + 10 * cos(timer/15.0), 0 + sin(timer), -5 + cos(timer));
 
 
     vec3 lightColorConstant = vec3(1.0,1.0,1.0); // light color

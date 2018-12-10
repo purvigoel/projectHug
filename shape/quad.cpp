@@ -41,15 +41,15 @@ void Quad::initializeShape(float x, float y){
 //    m_shape->setAttribute(ShaderAttrib::TEXCOORD0, 2, 12, VBOAttribMarker::DATA_TYPE::FLOAT, false);
 //    m_shape->buildVAO();
 
-    std::vector<GLfloat> quadData = {-3.0f,2.5f, 0.0f, 0.0f,1.0f,
-                                     -3.0f,-2.5f,0.0f, 0.0f,0.0f,
-                                     3.0f, 2.5f, 0.0f, 1.0f,1.0f,
-                                     3.0f,-2.5f, 0.0f, 1.0f, 0.0f };
+//    std::vector<GLfloat> quadData = {-3.0f,2.5f, 0.0f, 0.0f,1.0f,
+//                                     -3.0f,-2.5f,0.0f, 0.0f,0.0f,
+//                                     3.0f, 2.5f, 0.0f, 1.0f,1.0f,
+//                                     3.0f,-2.5f, 0.0f, 1.0f, 0.0f };
 
-//    std::vector<GLfloat> quadData = {-1.0,1.0f, 0.0f, 0.0f,1.0f,
-//                                     -1.0f,-1.0f, 0.0f, 0.0f,0.0f,
-//                                     1.0f, 1.0f, 0.0f, 1.0f,1.0f,
-//                                     1.0f,-1.0f, 0.0f, 1.0f, 0.0f };
+    std::vector<GLfloat> quadData = {-1.0,1.0f, 0.0f, 0.0f,1.0f,
+                                     -1.0f,-1.0f, 0.0f, 0.0f,0.0f,
+                                     1.0f, 1.0f, 0.0f, 1.0f,1.0f,
+                                     1.0f,-1.0f, 0.0f, 1.0f, 0.0f };
     m_shape = std::make_unique<OpenGLShape>();
     m_shape->setVertexData(&quadData[0], quadData.size(), VBO::GEOMETRY_LAYOUT::LAYOUT_TRIANGLE_STRIP, 4);
     m_shape->setAttribute(ShaderAttrib::POSITION, 3, 0, VBOAttribMarker::DATA_TYPE::FLOAT, false);

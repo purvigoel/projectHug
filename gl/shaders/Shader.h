@@ -69,6 +69,7 @@ public:
     void unbind();
     GLuint getID() const { return m_programID; }
 
+    GLint getTextureLocation(const std::string &name);
 private:
 
     GLuint createFragmentShaderFromSource(const std::string &source);
