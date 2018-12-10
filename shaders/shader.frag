@@ -373,7 +373,7 @@ void main()
     vec3 rayDir = normalize(worldSpace.xyz - eye.xyz);
 
     // light location
-    vec3 light = vec3( 10 * cos(timer/15.0), 0 + sin(timer), -5 + cos(timer));
+    vec3 light = vec3( 10 * cos(timer/15.0), 3 + sin(timer), -2 + cos(timer));
 
 
     vec3 lightColorConstant = vec3(1.0,1.0,1.0); // light color

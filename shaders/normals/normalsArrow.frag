@@ -58,7 +58,7 @@ vec4 sampleFurColor(float distanceFromCenter, vec2 uv, vec4 baseColor){
     float t = (radius - (1.0 - maxDepth)) / maxDepth;
     t = clamp(t, 0.0, 1.0);
     float i = t * 0.5 + 0.5;
-    return baseColor * i;
+    return baseColor * (texture(tex, uv) * 2.5 )* i ;
 }
 
 vec4 furColor(vec2 uv, vec4 baseColor){
@@ -102,13 +102,13 @@ void main(){
     vec4 currColor = texture(tex, uv);
 
     if((currColor.g ==0.0 && currColor.b == 0.0)|| (currColor.g != 0.0 && currColor.r == 0.0 && currColor.b==0.0)){
-        fragColor = currColor;
-        if(gl_FragCoord.y < size.y/3){
-            fragColor = vec4(0.0,1.0,0.0,1.0);
-        } else {
-            fragColor = vec4(0.0,0.0,1.0,1.0);
-        }
-
+//        fragColor = currColor;
+//        if(gl_FragCoord.y < size.y/3){
+//            fragColor = vec4(0.0,1.0,0.0,1.0);
+//        } else {
+//            fragColor = vec4(0.0,0.0,1.0,1.0);
+//        }
+        fragColor = vec4(0.0,0.0,0.0,1.0);
         if((currColor.g != 0.0 && currColor.r == 0.0 && currColor.b==0.0)){
             fragColor = vec4(1.0,1.0,1.0,1.0);
         }
