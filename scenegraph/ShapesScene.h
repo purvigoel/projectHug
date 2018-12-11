@@ -95,9 +95,12 @@ private:
     void changeShapeType();
 
     void setUpImage();
+    void setUpSkybox();
+
     GLWidget * m_widget;
     GLuint m_tID;
     GLuint newHandle;
+    GLuint m_skyboxHandle;
     QImage m_image;
     SupportCanvas3D *m_context;
 

@@ -16,6 +16,8 @@ uniform mat4 p;
 uniform mat4 v;
 uniform mat4 m;
 
+uniform samplerCube skybox;
+
 uniform int timer = 2;
 
 uniform vec2 resolution;
@@ -464,11 +466,11 @@ void main()
 
         } else {
 
-            calcColor = calcColor + vec3(0.0f,0.0f,0.0f);
-
+//            calcColor = calcColor + vec3(0.0f,0.0f,0.0f);
+//            calcColor = vec3(1,0,1);
         }
 
     }
-    fragColor = vec4(calcColor, 1.0f);        
-
+    fragColor = vec4(calcColor, 1.0f);
+//    fragColor = vec4(1.0);
 }

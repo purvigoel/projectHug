@@ -5,7 +5,7 @@
 
 #include <sstream>
 #include <iostream>
-
+#include <string>
 
 using namespace CS123::GL;
 #include "gl/shaders/CS123Shader.h"
@@ -46,6 +46,7 @@ ShapesScene::ShapesScene(int width, int height) :
     m_horizontalBlur = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
     std::cout << m_width << " " << m_height << std::endl;
     setUpImage();
+    setUpSkybox();
     //m_tID = 0;
 
 }
@@ -227,6 +228,12 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
 
     m_horizontalBlur->getColorAttachment(0).bind();
 
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxHandle);
+    GLint skyboxTextureLocation = m_phongShader->getTextureLocation("skybox");
+    glUniform1i(skyboxTextureLocation, 3); // ??????????
+//    printf("Skybox location: %d\n", skyboxTextureLocation);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, newHandle);
@@ -237,25 +244,43 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     setMatrixUniforms(m_normalsArrowShader.get(), context);
     renderGeometry();
     m_horizontalBlur->getColorAttachment(0).unbind();
-
     glActiveTexture(GL_TEXTURE0);
 }
 
 void ShapesScene::setUpImage(){
-//    QImage image(sphereNum, 1, QImage::Format_RGBA8888);
-
-//    m_image = image;
-    QImage *image = new QImage();
-    bool isLoaded = image->load("/home/pgoel2/course/cs1230/projects/tiger.png");
-    std::cout << "isloaded" << isLoaded << std::endl;
-    glActiveTexture(GL_TEXTURE0 + 1);
+    QImage image("/home/gchien/Pictures/tex.jpg");
+    glActiveTexture(GL_TEXTURE1);
     glGenTextures(1, &newHandle);
     glBindTexture(GL_TEXTURE_2D, newHandle);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width(), image->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image->bits());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glActiveTexture(GL_TEXTURE0);
+}
+
+void ShapesScene::setUpSkybox() {
+    glActiveTexture(GL_TEXTURE3);
+    glGenTextures(1, &m_skyboxHandle);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxHandle);
+    std::vector<std::string> imgpaths = {"/home/gchien/course/cs123/projectHug/skybox_imgs/posx.jpg",
+                                         "/home/gchien/course/cs123/projectHug/skybox_imgs/negx.jpg",
+                                         "/home/gchien/course/cs123/projectHug/skybox_imgs/posy.jpg",
+                                         "/home/gchien/course/cs123/projectHug/skybox_imgs/negy.jpg",
+                                         "/home/gchien/course/cs123/projectHug/skybox_imgs/posz.jpg",
+                                         "/home/gchien/course/cs123/projectHug/skybox_imgs/negz.jpg"};
+    for (int i=0; i<6; i++) {
+        QImage image(imgpaths[i].c_str());
+        Q_ASSERT(image.width() > 0);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                     0, GL_RGB, image.width(), image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.bits());
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     glActiveTexture(GL_TEXTURE0);
 }
 
