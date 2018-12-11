@@ -26,6 +26,9 @@ uniform float time;
 const int raytraceDepth = 2;
 const float M_PI = 3.1415926535897932384626433832795;
 
+bool intersected = false;
+vec3 rayDir = vec3(0.0);
+
 //void main(){
 //    vec3 texColor = texture(tex, texc).rgb;
 //    texColor = clamp(texColor + vec3(1-useTexture), vec3(0), vec3(1));
@@ -373,7 +376,7 @@ void main()
     float sphereRadius = 1.0;
     vec3 rayStart = eye.xyz;
 
-    vec3 rayDir = normalize(worldSpace.xyz - eye.xyz);
+    rayDir = normalize(worldSpace.xyz - eye.xyz);
 
     // light location
     vec3 light = vec3(0  + 10 * cos(timer/15.0), 0 + sin(timer), -5 + cos(timer));
@@ -399,6 +402,7 @@ void main()
         float res = info.t;
         bounceID = info.id;
         if(res != -1){
+            intersected = true;
             calcColor.b = 1.0;
             vec3 intersectAt = ((inverse(info.modelMat) * vec4(rayStart,1.0))).xyz + res * normalize((inverse(info.modelMat) * vec4(rayDir,0.0)).xyz);//point of intersection in object space
             vec3 intersectionWS = rayStart + res * rayDir; // world space
@@ -472,5 +476,8 @@ void main()
 
     }
     fragColor = vec4(calcColor, 1.0f);
-//    fragColor = vec4(1.0);
+    if (!intersected) {
+        fragColor = texture(skybox, rayDir);
+        fragColor = vec4(fragColor.b, fragColor.g, fragColor.r, 1.0);
+    }
 }

@@ -25,6 +25,7 @@ using namespace CS123::GL;
 #include "gl/datatype/FBO.h"
 #include "gl/textures/Texture2D.h"
 #include "glm/ext.hpp"
+
 ShapesScene::ShapesScene(int width, int height) :
     m_width(width),
     m_height(height)
@@ -138,15 +139,13 @@ void ShapesScene::render(SupportCanvas3D *context) {
 
 void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
   //  m_worm->bind();
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT);
 
-    m_worm->bind();
-   //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+//    m_worm->bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
+    glActiveTexture(GL_TEXTURE2);
     m_phongShader->bind();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -156,95 +155,88 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     setMatrixUniforms(m_phongShader.get(), context);
     renderGeometryAsFilledPolygons();
     m_phongShader->unbind();
+//    glActiveTexture(GL_TEXTURE0);
 
-    m_worm->unbind();
+//    m_worm->unbind();
 
-    m_wireframeShader->bind();
+////    m_wireframeShader->bind();
 
-    //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT);
 
-    m_worm->getColorAttachment(0).bind();
+//    m_worm->getColorAttachment(0).bind();
 
-    m_fill->bind();
-    m_wireframeShader->bind();
+//    m_fill->bind();
+//    m_wireframeShader->bind();
 
-    //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+//    //glViewport(0,0,m_width, m_height);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT);
 
-    setMatrixUniforms(m_wireframeShader.get(), context);
-    m_wireframeShader.get()->setUniform("searchWidth", 30);
-    renderGeometry();
-    m_worm->getColorAttachment(0).unbind();
+//    setMatrixUniforms(m_wireframeShader.get(), context);
+//    m_wireframeShader.get()->setUniform("searchWidth", 30);
+//    renderGeometry();
+//    m_worm->getColorAttachment(0).unbind();
 
-    m_fill->unbind();
+//    m_fill->unbind();
 
-    m_fill2->bind();
-    m_wireframeShader->bind();
+//    m_fill2->bind();
+//    m_wireframeShader->bind();
 
-    //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+////    //glViewport(0,0,m_width, m_height);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT);
 
-    m_fill->getColorAttachment(0).bind();
-    setMatrixUniforms(m_wireframeShader.get(), context);
-    m_wireframeShader.get()->setUniform("searchWidth",  4);
-    m_wireframeShader.get()->setUniform("finalFill", 1);
-    renderGeometry();
-
-
-
-    m_fill->getColorAttachment(0).unbind();
-    m_fill2->unbind();
+//    m_fill->getColorAttachment(0).bind();
+//    setMatrixUniforms(m_wireframeShader.get(), context);
+//    m_wireframeShader.get()->setUniform("searchWidth",  4);
+//    m_wireframeShader.get()->setUniform("finalFill", 1);
+//    renderGeometry();
 
 
-    m_wireframeShader->unbind();
 
-    m_horizontalBlur->bind();
+//    m_fill->getColorAttachment(0).unbind();
+//    m_fill2->unbind();
 
-    m_horizontalBlurShader->bind();
 
-    //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
-    m_fill2->getColorAttachment(0).bind();
-    setMatrixUniforms(m_horizontalBlurShader.get(), context);
-    m_horizontalBlurShader.get()->setUniform("speckle", 0);
+//    m_wireframeShader->unbind();
 
-    renderGeometry();
+//    m_horizontalBlur->bind();
 
-    m_fill2->getColorAttachment(0).unbind();
+//    m_horizontalBlurShader->bind();
 
-    m_horizontalBlur->unbind();
+//    //glViewport(0,0,m_width, m_height);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT);
+//    m_fill2->getColorAttachment(0).bind();
+//    setMatrixUniforms(m_horizontalBlurShader.get(), context);
+//    m_horizontalBlurShader.get()->setUniform("speckle", 0);
 
-    m_horizontalBlurShader->unbind();
-    m_normalsArrowShader->bind();
+//    renderGeometry();
 
-    glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+//    m_fill2->getColorAttachment(0).unbind();
 
-    m_horizontalBlur->getColorAttachment(0).bind();
+//    m_horizontalBlur->unbind();
 
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxHandle);
-    GLint skyboxTextureLocation = m_phongShader->getTextureLocation("skybox");
-    glUniform1i(skyboxTextureLocation, 3); // ??????????
-//    printf("Skybox location: %d\n", skyboxTextureLocation);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+//    m_horizontalBlurShader->unbind();
+//    m_normalsArrowShader->bind();
 
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, newHandle);
-    //3 is the uniform location. obviously, do better.
-    GLint secondTextureLocation = m_normalsArrowShader->getTextureLocation("texture2");
-    glUniform1i(secondTextureLocation,1);
+//    glViewport(0,0,m_width, m_height);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    glClear(GL_DEPTH_BUFFER_BIT);
 
-    setMatrixUniforms(m_normalsArrowShader.get(), context);
-    renderGeometry();
-    m_horizontalBlur->getColorAttachment(0).unbind();
-    glActiveTexture(GL_TEXTURE0);
+//    m_horizontalBlur->getColorAttachment(0).bind();
+
+//    glActiveTexture(GL_TEXTURE1);
+//    glBindTexture(GL_TEXTURE_2D, newHandle);
+//    //3 is the uniform location. obviously, do better.
+//    GLint secondTextureLocation = m_normalsArrowShader->getTextureLocation("texture2");
+//    glUniform1i(secondTextureLocation,1);
+
+//    setMatrixUniforms(m_normalsArrowShader.get(), context);
+//    renderGeometry();
+//    m_horizontalBlur->getColorAttachment(0).unbind();
+//    glActiveTexture(GL_TEXTURE0);
 }
 
 void ShapesScene::setUpImage(){
@@ -261,7 +253,7 @@ void ShapesScene::setUpImage(){
 }
 
 void ShapesScene::setUpSkybox() {
-    glActiveTexture(GL_TEXTURE3);
+    glActiveTexture(GL_TEXTURE2);
     glGenTextures(1, &m_skyboxHandle);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxHandle);
     std::vector<std::string> imgpaths = {"/home/gchien/course/cs123/projectHug/skybox_imgs/posx.jpg",
@@ -274,7 +266,7 @@ void ShapesScene::setUpSkybox() {
         QImage image(imgpaths[i].c_str());
         Q_ASSERT(image.width() > 0);
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                     0, GL_RGB, image.width(), image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.bits());
+                     0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

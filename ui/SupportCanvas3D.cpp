@@ -126,6 +126,8 @@ void SupportCanvas3D::initializeOpenGLSettings() {
 
     // Enable back-face culling, meaning only the front side of every face is rendered.
     glEnable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_2D);
+    printf("enabled GL_TEXTURE_2D\n");
     glCullFace(GL_BACK);
 
     // Specify that the front face is represented by vertices in counterclockwise order (this is
