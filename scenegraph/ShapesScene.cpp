@@ -49,8 +49,7 @@ ShapesScene::ShapesScene(int width, int height) :
     setUpImage();
     setUpBumpTex();
     setUpSkybox();
-    //m_tID = 0;
-
+    m_renderTimes = 0;
 }
 
 ShapesScene::~ShapesScene()
@@ -242,6 +241,8 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     glUniform1i(texLocation, 0);
     glActiveTexture(GL_TEXTURE0);
 
+    m_normalsArrowShader->setUniform("timer", m_renderTimes);
+    m_renderTimes +=1;
     setMatrixUniforms(m_normalsArrowShader.get(), context);
     renderGeometry();
     m_worm->getColorAttachment(1).unbind();
@@ -252,7 +253,7 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
 }
 
 void ShapesScene::setUpImage(){
-    QImage image("textures/skin.jpg");
+    QImage image("textures/tiger.png");
     glActiveTexture(GL_TEXTURE1);
     glGenTextures(1, &newHandle);
     glBindTexture(GL_TEXTURE_2D, newHandle);

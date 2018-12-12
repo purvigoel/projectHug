@@ -40,7 +40,7 @@ vec3 rayDir = vec3(0.0);
 //    fragColor = vec4(0.5,0.5,0.5, 1);
 //}
 
-float raySphereIntersect(vec3 r0, vec3 rd, vec3 s0, float sr) {
+float raySphereIntersect(vec3 origin, vec3 dir, float radius) {
     // - r0: ray origin
     // - rd: normalized ray direction
     // - s0: sphere center
@@ -49,17 +49,16 @@ float raySphereIntersect(vec3 r0, vec3 rd, vec3 s0, float sr) {
     //   or -1.0 if no intersection.
 
     //CONVERT r0 and rD to object space
-    float a = dot(rd, rd);
-    vec3 s0_r0 = r0 - s0;
-    float b = 2.0 * dot(rd, s0_r0);
-    float c = dot(s0_r0, s0_r0) - (sr * sr);
+    float a = dot(dir, dir);
+    float b = 2.0 * dot(dir, origin);
+    float c = dot(origin, origin) - (radius * radius);
     if (b*b - 4.0*a*c < 0.0) {
         return -1.0;
     }
     float t1 = (-b - sqrt((b*b) - 4.0*a*c))/(2.0*a);
     float t2= (-b + sqrt((b*b) - 4.0*a*c))/(2.0*a);
-    vec3 option1 = r0 + t1*rd;
-    vec3 option2 = r0 + t2*rd;
+    vec3 option1 = origin + t1*dir;
+    vec3 option2 = origin + t2*dir;
     float best = 100;
     if(t1 > 0 && option1.y < 0.5 && option1.y > -0.5){
         best = t1;
@@ -72,7 +71,6 @@ float raySphereIntersect(vec3 r0, vec3 rd, vec3 s0, float sr) {
     }
     return best;
 }
-
 //float rayTriangleIntersect(vec3 r0, vec3 rd, vec3 s0, float sr){
 
 //    for(int i = 0; i < 9; i += 3){
@@ -105,203 +103,203 @@ struct IntersectInfo{
 
 
 mat4x4[SPHERENUM] makeSpheres(){
-   mat4x4 spheres[SPHERENUM];
-   mat4x4 transform = mat4(1.0f);
+    mat4x4 spheres[SPHERENUM];
+       mat4x4 transform = mat4(1.0f);
 
 
-   mat4x4 neckScale = mat4x4(0.5, 0.0, 0.0, 0.0,
-                         0.0, 0.5, 0.0, 0.0,
-                         0.0, 0.0, 0.5, 0.0,
-                         0.0, 0.0, 0.0, 1.0);
-   mat4x4 transform2 = mat4x4(1.0, 0.0 , 0.0,0.0,
-                              0.0, 1.0, 0.0,0.0,
-                              0.0, 0.0, 1.0, 0.0,
-                              (3.2f + (sin(float(timer ) + 1.0f)) / 1), -2.6f + (sin(float(timer ) + 1.0f)) / 10.0, 0f, 1.0);
-
-  spheres[0] = transform2 * neckScale ;
-
-  transform2 = mat4x4(1.0, 0.0 , 0.0,0.0,
-                                0.0,1.0, 0.0,0.0,
-                                0.0, 0.0, 1.0, 0.0,
-                                ( 0.5f), -1.0f, 0.0f, 1.0);
-
-
-  mat4x4 bodyScale = mat4x4(2.0 + (sin(float(timer)) / 10.0f), 0.0, 0.0, 0.0,
-                           0.0, 2.0 + (sin(float(timer))/ 10.0f), 0.0, 0.0,
-                           0.0, 0.0, 2.0 + (sin(float(timer))/ 10.0f), 0.0,
-                           0.0, 0.0, 0.0, 1.0);
-   spheres[1]= transform2 * bodyScale;
-
-   transform2 = mat4x4(1.0, 0.0 , 0.0,0.0,
-                                 0.0, 1.0, 0.0,0.0,
-                                 0.0, 0.0, 1.0, 0.0,
-                                 (2.7f), -0.75f + sin(float(timer) + 1.0f)/20.0, 0.0f, 1.0);
-
-    mat4x4 backscale =mat4x4(1.25, 0.0, 0.0, 0.0,
-                         0.0, 1.25, 0.0, 0.0,
-                         0.0, 0.0, 1.0, 0.0,
-                         0.0, 0.0, 0.0, 1.0);
-    spheres[2]= transform2 * backscale;
-
-    mat4x4 headScale = mat4x4(1.1, 0.0, 0.0, 0.0,
-                             0.0, 1.1, 0.0, 0.0,
-                             0.0, 0.0, 1.0, 0.0,
+       mat4x4 neckScale = mat4x4(0.5, 0.0, 0.0, 0.0,
+                             0.0, 0.5, 0.0, 0.0,
+                             0.0, 0.0, 0.5, 0.0,
                              0.0, 0.0, 0.0, 1.0);
-    float headTimer = (4 % 5)/5.0f;
-    mat4x4 headRotate = mat4x4(cos(float(headTimer)), sin(float(headTimer)), 0.0f, 0.0f,
-                               -sin(float(headTimer)), cos(float(headTimer)), 0.0f, 0.0f,
-                               0.0f, 0.0f ,1.0f,0.0f,
-                               0.0f, 0.0f, 0.0f, 1.0f);
-    transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+       mat4x4 transform2 = mat4x4(1.0, 0.0 , 0.0,0.0,
                                   0.0, 1.0, 0.0,0.0,
                                   0.0, 0.0, 1.0, 0.0,
-                                  (- 1.4f), -0.3f, 0.0f, 1.0);
+                                  (3.2f + (sin(float(timer ) + 1.0f)) / 1), -2.6f + (sin(float(timer ) + 1.0f)) / 10.0, 0f, 1.0);
+
+      spheres[0] = transform2 * neckScale ;
+
+      transform2 = mat4x4(1.0, 0.0 , 0.0,0.0,
+                                    0.0,1.0, 0.0,0.0,
+                                    0.0, 0.0, 1.0, 0.0,
+                                    ( 0.5f), -1.0f, 0.0f, 1.0);
 
 
-     spheres[3]= transform2 * headRotate * headScale;
-
-
-     mat4x4 kneeScale = mat4x4(0.5, 0.0, 0.0, 0.0,
-                              0.0, 0.5, 0.0, 0.0,
-                              0.0, 0.0, 0.5, 0.0,
-                              0.0, 0.0, 0.0, 1.0);
-     transform2 = mat4x4(1, 0.0 , 0.0,0.0,
-                                   0.0,1, 0.0,0.0,
-                                   0.0, 0.0, 1, 0.0,
-                                   (0.5f + (sin(float(timer)))/2.0), -2.3f, 0f, 1.0);
-
-
-      spheres[4]= transform2 * kneeScale;
-      transform2 = mat4x4(1, 0.0 , 0.0,0.0,
-                                    0.0,1, 0.0,0.0,
-                                    0.0, 0.0, 1, 0.0,
-                                    (3.0f + (sin(float(timer ) + 1.0f)) / 2.0), -1.6f + (sin(float(timer ) + 1.0f)) / 10.0, 0f, 1.0);
-
-
-       spheres[5]= transform2 * kneeScale;
-
-       transform2 = mat4x4(1, 0.0 , 0.0,0.0,
-                                     0.0,1, 0.0,0.0,
-                                     0.0, 0.0, 1, 0.0,
-                                     (3.1f + (sin(float(timer ) + 1.0f)) / 1.5), -2.15f + (sin(float(timer ) + 1.0f)) / 10.0 , 0f, 1.0);
-
-
-        spheres[6]= transform2 * kneeScale;
-
-        transform2 = mat4x4(1, 0.0 , 0.0,0.0,
-                                      0.0,1, 0.0,0.0,
-                                      0.0, 0.0, 1, 0.0,
-                                      (0.5f + (sin(float(timer ))) / 1.5), -2.9f , 0f, 1.0);
-
-
-         spheres[7]= transform2 * kneeScale;
-
-      mat4x4 abdomenScale = mat4x4(1, 0.0, 0.0, 0.0,
-                               0.0, 1, 0.0, 0.0,
-                               0.0, 0.0, 1, 0.0,
+      mat4x4 bodyScale = mat4x4(2.0 + (sin(float(timer)) / 10.0f), 0.0, 0.0, 0.0,
+                               0.0, 2.0 + (sin(float(timer))/ 10.0f), 0.0, 0.0,
+                               0.0, 0.0, 2.0 + (sin(float(timer))/ 10.0f), 0.0,
                                0.0, 0.0, 0.0, 1.0);
-      transform2 = mat4x4(1, 0.0 , 0.0,0.0,
-                                    0.0,1, 0.0,0.0,
-                                    0.0, 0.0, 1, 0.0,
-                                    (1.8f), -0.75f, 0f, 1.0);
+       spheres[1]= transform2 * bodyScale;
 
-
-       spheres[8]= transform2 * abdomenScale;
-
-       mat4x4 spineScale = mat4x4(0.75, 0.0, 0.0, 0.0,
-                                0.0, 0.75, 0.0, 0.0,
-                                0.0, 0.0, 0.75, 0.0,
-                                0.0, 0.0, 0.0, 1.0);
-
-
-       transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+       transform2 = mat4x4(1.0, 0.0 , 0.0,0.0,
                                      0.0, 1.0, 0.0,0.0,
                                      0.0, 0.0, 1.0, 0.0,
-                                     (- 0.7f), -0.2f, 0.0f, 1.0);
+                                     (2.7f), -0.75f + sin(float(timer) + 1.0f)/20.0, 0.0f, 1.0);
 
+        mat4x4 backscale =mat4x4(1.25, 0.0, 0.0, 0.0,
+                             0.0, 1.25, 0.0, 0.0,
+                             0.0, 0.0, 1.0, 0.0,
+                             0.0, 0.0, 0.0, 1.0);
+        spheres[2]= transform2 * backscale;
 
-        spheres[9]= transform2 * spineScale;
-
-        mat4x4 tailScale = mat4x4(0.25, 0.0, 0.0, 0.0,
-                                 0.0, 0.25, 0.0, 0.0,
-                                 0.0, 0.0, 0.25, 0.0,
+        mat4x4 headScale = mat4x4(1.1, 0.0, 0.0, 0.0,
+                                 0.0, 1.1, 0.0, 0.0,
+                                 0.0, 0.0, 1.0, 0.0,
                                  0.0, 0.0, 0.0, 1.0);
-
-
+        float headTimer = (4 % 5)/5.0f;
+        mat4x4 headRotate = mat4x4(cos(float(headTimer)), sin(float(headTimer)), 0.0f, 0.0f,
+                                   -sin(float(headTimer)), cos(float(headTimer)), 0.0f, 0.0f,
+                                   0.0f, 0.0f ,1.0f,0.0f,
+                                   0.0f, 0.0f, 0.0f, 1.0f);
         transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                       0.0, 1.0, 0.0,0.0,
                                       0.0, 0.0, 1.0, 0.0,
-                                       (3.5f), -0.4f, 0.0f, 1.0);
+                                      (- 1.4f), -0.3f, 0.0f, 1.0);
 
 
-         spheres[10]= transform2 * tailScale;
+         spheres[3]= transform2 * headRotate * headScale;
 
-         mat4x4 tailScale2 = mat4x4(0.25, 0.0, 0.0, 0.0,
-                                  0.0, 0.25, 0.0, 0.0,
-                                  0.0, 0.0, 0.25, 0.0,
+
+         mat4x4 kneeScale = mat4x4(0.5, 0.0, 0.0, 0.0,
+                                  0.0, 0.5, 0.0, 0.0,
+                                  0.0, 0.0, 0.5, 0.0,
                                   0.0, 0.0, 0.0, 1.0);
-
-
          transform2 = mat4x4(1, 0.0 , 0.0,0.0,
-                                       0.0, 1.0, 0.0,0.0,
-                                       0.0, 0.0, 1.0, 0.0,
-                                        (3.8f), -0.6f, 0.0f, 1.0);
+                                       0.0,1, 0.0,0.0,
+                                       0.0, 0.0, 1, 0.0,
+                                       (0.5f + (sin(float(timer)))/2.0), -2.3f, 0f, 1.0);
 
 
-          spheres[11]= transform2 * tailScale2;
-
-          mat4x4 tailScale3 = mat4x4(0.25, 0.0, 0.0, 0.0,
-                                   0.0, 0.25, 0.0, 0.0,
-                                   0.0, 0.0, 0.25, 0.0,
-                                   0.0, 0.0, 0.0, 1.0);
-
-
+          spheres[4]= transform2 * kneeScale;
           transform2 = mat4x4(1, 0.0 , 0.0,0.0,
-                                        0.0, 1.0, 0.0,0.0,
-                                        0.0, 0.0, 1.0, 0.0,
-                                         (4.0f), -0.8f, 0.0f, 1.0);
+                                        0.0,1, 0.0,0.0,
+                                        0.0, 0.0, 1, 0.0,
+                                        (3.0f + (sin(float(timer ) + 1.0f)) / 2.0), -1.6f + (sin(float(timer ) + 1.0f)) / 10.0, 0f, 1.0);
 
 
-           spheres[12]= transform2 * tailScale3;
+           spheres[5]= transform2 * kneeScale;
+
+           transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+                                         0.0,1, 0.0,0.0,
+                                         0.0, 0.0, 1, 0.0,
+                                         (3.1f + (sin(float(timer ) + 1.0f)) / 1.5), -2.15f + (sin(float(timer ) + 1.0f)) / 10.0 , 0f, 1.0);
 
 
-           mat4x4 floorScale = mat4x4(10, 0.0, 0.0, 0.0,
-                                    0.0, 1, 0.0, 0.0,
-                                    0.0, 0.0, 1, 0.0,
+            spheres[6]= transform2 * kneeScale;
+
+            transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+                                          0.0,1, 0.0,0.0,
+                                          0.0, 0.0, 1, 0.0,
+                                          (0.5f + (sin(float(timer ))) / 1.5), -2.9f , 0f, 1.0);
+
+
+             spheres[7]= transform2 * kneeScale;
+
+          mat4x4 abdomenScale = mat4x4(1, 0.0, 0.0, 0.0,
+                                   0.0, 1, 0.0, 0.0,
+                                   0.0, 0.0, 1, 0.0,
+                                   0.0, 0.0, 0.0, 1.0);
+          transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+                                        0.0,1, 0.0,0.0,
+                                        0.0, 0.0, 1, 0.0,
+                                        (1.8f), -0.75f, 0f, 1.0);
+
+
+           spheres[8]= transform2 * abdomenScale;
+
+           mat4x4 spineScale = mat4x4(0.75, 0.0, 0.0, 0.0,
+                                    0.0, 0.75, 0.0, 0.0,
+                                    0.0, 0.0, 0.75, 0.0,
                                     0.0, 0.0, 0.0, 1.0);
 
 
            transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                          0.0, 1.0, 0.0,0.0,
                                          0.0, 0.0, 1.0, 0.0,
-                                          (0f), -3.8f, 0.0f, 1.0);
+                                         (- 0.7f), -0.2f, 0.0f, 1.0);
 
 
-            spheres[13]= transform2 * floorScale;
+            spheres[9]= transform2 * spineScale;
 
-            mat4x4 muzzle = mat4x4(0.65, 0.0, 0.0, 0.0,
-                                     0.0, 0.65, 0.0, 0.0,
-                                     0.0, 0.0, 0.65, 0.0,
+            mat4x4 earScale = mat4x4(0.25, 0.0, 0.0, 0.0,
+                                     0.0, 0.25, 0.0, 0.0,
+                                     0.0, 0.0, 0.25, 0.0,
                                      0.0, 0.0, 0.0, 1.0);
 
 
             transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                           0.0, 1.0, 0.0,0.0,
                                           0.0, 0.0, 1.0, 0.0,
-                                           (-1.9f), -0.75f, 0.0f, 1.0);
+                                           (-1.7f), 0.4f, 0.0f, 1.0);
 
 
-             spheres[14]= transform2 * muzzle;
+             spheres[10]= transform2 * earScale;
 
-           for(int i = 0; i < SPHERENUM; i ++){
+             mat4x4 backFootScale = mat4x4(0.5, 0.0, 0.0, 0.0,
+                                      0.0, 0.25, 0.0, 0.0,
+                                      0.0, 0.0, 0.25, 0.0,
+                                      0.0, 0.0, 0.0, 1.0);
+
+
+             transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+                                           0.0, 1.0, 0.0,0.0,
+                                           0.0, 0.0, 1.0, 0.0,
+                                            (3.0f + (sin(float(timer ) + 1.0f)) / 0.9), -3.1f + (sin(float(timer ) + 1.0f)) / 10.0 , 0.0f, 1.0);
+
+
+              spheres[11]= transform2 * backFootScale;
+
+              mat4x4 footScale = mat4x4(0.5, 0.0, 0.0, 0.0,
+                                       0.0, 0.25, 0.0, 0.0,
+                                       0.0, 0.0, 0.25, 0.0,
+                                       0.0, 0.0, 0.0, 1.0);
+
+
+              transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+                                            0.0, 1.0, 0.0,0.0,
+                                            0.0, 0.0, 1.0, 0.0,
+                                             (0.5f + (sin(float(timer ))) / 1.0f), -3.3f, 0.0f, 1.0);
+
+
+               spheres[12]= transform2 * footScale;
+
+
+               mat4x4 eyeScale = mat4x4(0.15, 0.0, 0.0, 0.0,
+                                        0.0, 0.15, 0.0, 0.0,
+                                        0.0, 0.0, 0.15, 0.0,
+                                        0.0, 0.0, 0.0, 1.0);
+
+
                transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                              0.0, 1.0, 0.0,0.0,
                                              0.0, 0.0, 1.0, 0.0,
-                                              (-1.0f), sin( float(timer))/10.0, -10.0f, 1.0);
+                                              (-1.9f), -0.2f, 0.0f, 1.0);
 
-               spheres[i] = spineScale*spheres[i];
-               spheres[i] = transform2*spheres[i];
-           }
+
+                spheres[13]= transform2 * eyeScale;
+
+                mat4x4 muzzle = mat4x4(0.65, 0.0, 0.0, 0.0,
+                                         0.0, 0.65, 0.0, 0.0,
+                                         0.0, 0.0, 0.65, 0.0,
+                                         0.0, 0.0, 0.0, 1.0);
+
+
+                transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+                                              0.0, 1.0, 0.0,0.0,
+                                              0.0, 0.0, 1.0, 0.0,
+                                               (-1.9f), -0.75f, 0.0f, 1.0);
+
+
+                 spheres[14]= transform2 * muzzle;
+
+               for(int i = 0; i < SPHERENUM; i ++){
+                   transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+                                                 0.0, 1.0, 0.0,0.0,
+                                                 0.0, 0.0, 1.0, 0.0,
+                                                  (-1.0f), sin( float(timer))/10.0, -10.0f, 1.0);
+
+                   spheres[i] = spineScale*spheres[i];
+                   spheres[i] = transform2*spheres[i];
+               }
    return spheres;
 }
 
@@ -314,7 +312,7 @@ IntersectInfo findCollision(mat4x4[SPHERENUM] transforms, int length, vec3 r0, v
         if(fromID == i){
             continue;
         }
-        float currT = raySphereIntersect((inverse(modelMat) * vec4(r0,1.0)).xyz, normalize((inverse(modelMat) * vec4(rd,0.0))).xyz, vec3(0,0,0), 0.5);
+        float currT = raySphereIntersect((inverse(modelMat) * vec4(r0,1.0)).xyz, normalize((inverse(modelMat) * vec4(rd,0.0))).xyz, 0.5);
 
         if(currT != -1 && currT < bestT && (fromID != i)  ){
             bestT = currT;
@@ -351,7 +349,7 @@ IntersectInfo findShadowCollision(Sphere[2] spheres, int length, vec3 r0, vec3 r
         if(i == 1){
             currSphere = spheres[1];
         }
-        float currT = raySphereIntersect((inverse(currSphere.modelMat) * vec4(r0,1.0)).xyz, normalize((inverse(currSphere.modelMat) * vec4(rd,0.0)).xyz), currSphere.sphereCenter, 0.5);
+        float currT = raySphereIntersect((inverse(currSphere.modelMat) * vec4(r0,1.0)).xyz, normalize((inverse(currSphere.modelMat) * vec4(rd,0.0)).xyz), 0.5);
 
         if(currT != -1  && (fromID != currSphere.id || abs(currT) > 1.01) ){
             bestT = currT;
