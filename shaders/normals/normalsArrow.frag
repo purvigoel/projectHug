@@ -5,18 +5,22 @@ in vec2 uv;
 uniform int searchWidth;
 uniform sampler2D tex;
 uniform sampler2D texture2;
+uniform sampler2D rayDir_data;
 uniform int finalFill = 0;
-
+//uniform samplerCube skybox;
 
 out vec4 fragColor;
 // Professor Ralph Lingonberry the 3rd
 void main(){
 //    fragColor = vec4(0.0);
+
     vec2 size = textureSize(tex,0).xy;
     vec2 texelSize = 1.0 / textureSize(tex,0).xy;
     vec4 currColor = texture(tex, uv);
     if((currColor.g == 0.0 && currColor.b == 0.0)|| (currColor.g != 0.0 && currColor.r == 0.0 && currColor.b==0.0)){
-//        fragColor = vec4(0,1,1,1);
+//        fragColor = vec3(texture(rayDir_data, uv));
+        fragColor = texture(rayDir_data, uv);
+        fragColor = vec4(fragColor.b , fragColor.g, fragColor.r, 1.0);
 //        fragColor = currColor;
 //        if(gl_FragCoord.y < size.y/3){
 //            fragColor = vec4(0.0,1.0,0.0,1.0);

@@ -7,6 +7,7 @@ in vec3 color;
 in vec2 texc;
 in mat4x4 cam;
 out vec4 fragColor;
+out vec4 rayDir_data;
 
 uniform sampler2DRect tex;
 uniform int useTexture = 0;
@@ -15,6 +16,8 @@ const int SPHERENUM = 15;
 uniform mat4 p;
 uniform mat4 v;
 uniform mat4 m;
+
+uniform int renderDir = 0;
 
 uniform samplerCube skybox;
 
@@ -477,7 +480,8 @@ void main()
     }
     fragColor = vec4(calcColor, 1.0f);
     if (!intersected) {
-        fragColor = texture(skybox, rayDir);
+        rayDir_data = texture(skybox, rayDir);
+//        rayDir_data = vec4(rayDir, 0.0);
         fragColor = vec4(fragColor.b, fragColor.g, fragColor.r, 1.0);
     }
 }
