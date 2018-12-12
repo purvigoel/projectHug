@@ -85,8 +85,11 @@ vec4 furColor(vec2 uv, vec4 baseColor){
        vec2 moveSampleBy = texelSize;
        sampleAt = sampleAt + moveSampleBy;
        //finalColor = vec4(float(i)/float(maxFurLayers),float(i)/float(maxFurLayers),float(i)/float(maxFurLayers),1.0 );
-    }
 
+    }
+    if(finalColor.r == 0.0){
+        finalColor.w = 0.1;
+    }
     return finalColor;
 }
 
@@ -127,6 +130,11 @@ void main(){
         fragColor = newColor;
 
         vec4 baseColor =  texColor * (fragColor.r * 1.5);
-        fragColor = furColor(uv, baseColor) * 1.5;
+        vec4 finalColor =  furColor(uv, baseColor);
+        if(finalColor.w != 0.1){
+            fragColor = finalColor * 1.5;
+        } else {
+            fragColor = texture(rayDir_data, uv);
+        }
     }
 }
