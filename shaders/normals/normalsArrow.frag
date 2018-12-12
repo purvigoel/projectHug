@@ -58,7 +58,7 @@ vec4 sampleFurColor(float distanceFromCenter, vec2 uv, vec4 baseColor){
     float t = (radius - (1.0 - maxDepth)) / maxDepth;
     t = clamp(t, 0.0, 1.0);
     float i = t * 0.5 + 0.5;
-    return baseColor * (texture(tex, uv) * 2.5 )* i ;
+    return baseColor * (texture(tex, uv) * 1.5 )* i ;
 }
 
 vec4 furColor(vec2 uv, vec4 baseColor){

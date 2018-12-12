@@ -210,7 +210,7 @@ mat4x4[SPHERENUM] makeSpheres(int timer){
 
         spheres[9]= transform2 * spineScale;
 
-        mat4x4 tailScale = mat4x4(0.25, 0.0, 0.0, 0.0,
+        mat4x4 earScale = mat4x4(0.25, 0.0, 0.0, 0.0,
                                  0.0, 0.25, 0.0, 0.0,
                                  0.0, 0.0, 0.25, 0.0,
                                  0.0, 0.0, 0.0, 1.0);
@@ -219,12 +219,12 @@ mat4x4[SPHERENUM] makeSpheres(int timer){
         transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                       0.0, 1.0, 0.0,0.0,
                                       0.0, 0.0, 1.0, 0.0,
-                                       (3.5f), -0.4f, 0.0f, 1.0);
+                                       (-1.7f), 0.4f, 0.0f, 1.0);
 
 
-         spheres[10]= transform2 * tailScale;
+         spheres[10]= transform2 * earScale;
 
-         mat4x4 tailScale2 = mat4x4(0.25, 0.0, 0.0, 0.0,
+         mat4x4 backFootScale = mat4x4(0.5, 0.0, 0.0, 0.0,
                                   0.0, 0.25, 0.0, 0.0,
                                   0.0, 0.0, 0.25, 0.0,
                                   0.0, 0.0, 0.0, 1.0);
@@ -233,12 +233,12 @@ mat4x4[SPHERENUM] makeSpheres(int timer){
          transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                        0.0, 1.0, 0.0,0.0,
                                        0.0, 0.0, 1.0, 0.0,
-                                        (3.8f), -0.6f, 0.0f, 1.0);
+                                        (3.0f + (sin(float(timer ) + 1.0f)) / 0.9), -3.1f + (sin(float(timer ) + 1.0f)) / 10.0 , 0.0f, 1.0);
 
 
-          spheres[11]= transform2 * tailScale2;
+          spheres[11]= transform2 * backFootScale;
 
-          mat4x4 tailScale3 = mat4x4(0.25, 0.0, 0.0, 0.0,
+          mat4x4 footScale = mat4x4(0.5, 0.0, 0.0, 0.0,
                                    0.0, 0.25, 0.0, 0.0,
                                    0.0, 0.0, 0.25, 0.0,
                                    0.0, 0.0, 0.0, 1.0);
@@ -247,10 +247,10 @@ mat4x4[SPHERENUM] makeSpheres(int timer){
           transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                         0.0, 1.0, 0.0,0.0,
                                         0.0, 0.0, 1.0, 0.0,
-                                         (4.0f), -0.8f, 0.0f, 1.0);
+                                         (0.5f + (sin(float(timer ))) / 1.0f), -3.3f, 0.0f, 1.0);
 
 
-           spheres[12]= transform2 * tailScale3;
+           spheres[12]= transform2 * footScale;
 
 
            mat4x4 eyeScale = mat4x4(0.15, 0.0, 0.0, 0.0,
@@ -312,20 +312,6 @@ IntersectInfo findCollision(mat4x4[SPHERENUM] transforms, int length, vec3 r0, v
         }
     }
     return info;
-}
-
-float sdRoundCone( in vec3 p, in float r1, float r2, float h )
-{
-    vec2 q = vec2( length(p.xz), p.y );
-
-    float b = (r1-r2)/h;
-    float a = sqrt(1.0-b*b);
-    float k = dot(q,vec2(-b,a));
-
-    if( k < 0.0 ) return length(q) - r1;
-    if( k > a*h ) return length(q-vec2(0.0,h)) - r2;
-
-    return dot(q, vec2(a,b) ) - r1;
 }
 
 IntersectInfo findShadowCollision(Sphere[2] spheres, int length, vec3 r0, vec3 rd, int fromID){

@@ -246,6 +246,7 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
 }
 
 void ShapesScene::setUpImage(){
+    // Qimage image(file);
     QImage *image = new QImage();
     bool isLoaded = image->load("/home/pgoel2/course/cs1230/projects/tiger.png");
     glActiveTexture(GL_TEXTURE0 + 1);
