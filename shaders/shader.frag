@@ -20,6 +20,7 @@ uniform mat4 m;
 uniform int renderDir = 0;
 
 uniform samplerCube skybox;
+uniform sampler2D bumpMapTex;
 
 uniform int timer = 2;
 
@@ -85,7 +86,9 @@ vec3 sphereNormal(vec3 p){
     if(abs(p.x) < 0.000001 && abs(p.y) < 0.000001 && abs(p.z) < 0.000001){
         adjustX += 0.00001;
     }
+    vec3 texSample = vec3(texture(bumpMapTex, p.xy));
     return normalize(vec3(2.0f * adjustX, 2.0f * p.y, 2.0f * p.z));
+//    return normalize(vec3(texSample.x*2-1, texSample.y*2-1, texSample.z*2-1));
 }
 
 struct Sphere {

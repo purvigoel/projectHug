@@ -47,6 +47,7 @@ ShapesScene::ShapesScene(int width, int height) :
     m_horizontalBlur = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
     std::cout << m_width << " " << m_height << std::endl;
     setUpImage();
+    setUpBumpTex();
     setUpSkybox();
     //m_tID = 0;
 
@@ -148,11 +149,16 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     setPhongSceneUniforms();
 
     glActiveTexture(GL_TEXTURE3);
-    glEnable(GL_TEXTURE_CUBE_MAP);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxHandle);
     GLint skyboxTexLocation = m_phongShader->getTextureLocation("skybox");
-    std::cout << "Skybox tex location " << skyboxTexLocation << std::endl;
+//    std::cout << "Skybox tex location " << skyboxTexLocation << std::endl;
     glUniform1i(skyboxTexLocation, 3);
+
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, m_bumpHandle);
+    GLint normalTexLocation = m_phongShader->getTextureLocation("bumpMapTex");
+    std::cout << "normalTexLocation " << normalTexLocation << std::endl;
+    glUniform1i(normalTexLocation, 4);
 
     setMatrixUniforms(m_phongShader.get(), context);
     renderGeometryAsFilledPolygons();
@@ -162,21 +168,7 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
 
     m_worm->unbind();
 
-//    m_worm->getColorAttachment(1).bind();
-//    m_phongShader->bind();
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    clearLights();
-//    setLights(context->getCamera()->getViewMatrix());
-//    setPhongSceneUniforms();
-//    setMatrixUniforms(m_phongShader.get(), context);
-//    m_phongShader.get()->setUniform("renderDir", 1);
-//    renderGeometryAsFilledPolygons();
-//    m_phongShader->unbind();
-//    m_worm->getColorAttachment(1).unbind();
-
-
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     m_worm->getColorAttachment(0).bind();
 
@@ -184,9 +176,7 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     m_wireframeShader->bind();
 
 
-    //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     setMatrixUniforms(m_wireframeShader.get(), context);
     m_wireframeShader.get()->setUniform("searchWidth", 30);
@@ -198,9 +188,7 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     m_fill2->bind();
     m_wireframeShader->bind();
 
-//    //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     m_fill->getColorAttachment(0).bind();
     setMatrixUniforms(m_wireframeShader.get(), context);
@@ -208,8 +196,6 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     m_wireframeShader.get()->setUniform("finalFill", 1);
 
     renderGeometry();
-
-
 
     m_fill->getColorAttachment(0).unbind();
     m_fill2->unbind();
@@ -221,9 +207,7 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
 
     m_horizontalBlurShader->bind();
 
-    //glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_fill2->getColorAttachment(0).bind();
     setMatrixUniforms(m_horizontalBlurShader.get(), context);
     m_horizontalBlurShader.get()->setUniform("speckle", 0);
@@ -237,55 +221,38 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
     m_horizontalBlurShader->unbind();
     m_normalsArrowShader->bind();
 
-//    glActiveTexture(GL_TEXTURE2);
-//    glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxHandle);
-//    GLint skyboxTexLocation = m_normalsArrowShader->getTextureLocation("skybox");
-//    glUniform1i(skyboxTexLocation, 2);
-
     glViewport(0,0,m_width, m_height);
     glClear(GL_COLOR_BUFFER_BIT);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-//    m_horizontalBlur->getColorAttachment(0).bind();
-
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, newHandle);
-    //3 is the uniform location. obviously, do better.
     GLint secondTextureLocation = m_normalsArrowShader->getTextureLocation("texture2");
     glUniform1i(secondTextureLocation,1);
 
 
     glActiveTexture(GL_TEXTURE2);
-    glEnable(GL_TEXTURE_2D);
     m_worm->getColorAttachment(1).bind();
     GLint rayDirTexLocation = m_normalsArrowShader->getTextureLocation("rayDirData");
-//    std::cout << "Skybox tex location " << skyboxTexLocation << std::endl;
     glUniform1i(rayDirTexLocation, 2);
 
     glActiveTexture(GL_TEXTURE0);
     m_horizontalBlur->getColorAttachment(0).bind();
     GLint texLocation = m_normalsArrowShader->getTextureLocation("tex");
-//    std::cout << "Tex location " << texLocation << std::endl;
     glUniform1i(texLocation, 0);
     glActiveTexture(GL_TEXTURE0);
-
-//    glActiveTexture(GL_TEXTURE3);
-//    glEnable(GL_TEXTURE_CUBE_MAP);
-//    glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxHandle);
-//    GLint skyboxTexLocation = m_normalsArrowShader->getTextureLocation("skybox");
-//    std::cout << "Skybox tex location " << skyboxTexLocation << std::endl;
-//    glUniform1i(skyboxTexLocation, 3);
 
     setMatrixUniforms(m_normalsArrowShader.get(), context);
     renderGeometry();
     m_worm->getColorAttachment(1).unbind();
     m_horizontalBlur->getColorAttachment(0).unbind();
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glActiveTexture(GL_TEXTURE0);
 }
 
 void ShapesScene::setUpImage(){
-    QImage image("/home/gchien/Pictures/tex.jpg");
+    QImage image("textures/skin.jpg");
     glActiveTexture(GL_TEXTURE1);
     glGenTextures(1, &newHandle);
     glBindTexture(GL_TEXTURE_2D, newHandle);
@@ -296,6 +263,20 @@ void ShapesScene::setUpImage(){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glActiveTexture(GL_TEXTURE0);
 }
+
+void ShapesScene::setUpBumpTex(){
+    QImage image("textures/bump_paper.jpg");
+    glActiveTexture(GL_TEXTURE4);
+    glGenTextures(1, &m_bumpHandle);
+    glBindTexture(GL_TEXTURE_2D, m_bumpHandle);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.bits());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glActiveTexture(GL_TEXTURE0);
+}
+
 
 void ShapesScene::setUpSkybox() {
     glActiveTexture(GL_TEXTURE3);
