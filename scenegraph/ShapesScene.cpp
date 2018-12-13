@@ -39,7 +39,7 @@ ShapesScene::ShapesScene(int width, int height) :
     std::cout << "shapes" << std::endl;
 
     //TODO: [SHAPES] Allocate any additional memory you need...
-    m_widget = new Cone();
+    m_widget = new Quad();
 
     m_worm = std::make_unique<FBO>(2, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
     m_fill = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
@@ -138,118 +138,128 @@ void ShapesScene::render(SupportCanvas3D *context) {
 }
 
 void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
-    m_worm->bind();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    m_phongShader->bind();
+    if(settings.raytrace){
+        if(settings.useLighting){
+            m_worm->bind();
+        }
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        m_phongShader->bind();
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    clearLights();
-    setLights(context->getCamera()->getViewMatrix());
-    setPhongSceneUniforms();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        clearLights();
+        setLights(context->getCamera()->getViewMatrix());
+        setPhongSceneUniforms();
 
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxHandle);
-    GLint skyboxTexLocation = m_phongShader->getTextureLocation("skybox");
-//    std::cout << "Skybox tex location " << skyboxTexLocation << std::endl;
-    glUniform1i(skyboxTexLocation, 3);
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxHandle);
+        GLint skyboxTexLocation = m_phongShader->getTextureLocation("skybox");
 
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, m_bumpHandle);
-    GLint normalTexLocation = m_phongShader->getTextureLocation("bumpMapTex");
-    std::cout << "normalTexLocation " << normalTexLocation << std::endl;
-    glUniform1i(normalTexLocation, 4);
+        glUniform1i(skyboxTexLocation, 3);
 
-    setMatrixUniforms(m_phongShader.get(), context);
-    renderGeometryAsFilledPolygons();
-    m_phongShader->unbind();
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, m_bumpHandle);
+        GLint normalTexLocation = m_phongShader->getTextureLocation("bumpMapTex");
+        glUniform1i(normalTexLocation, 4);
 
-    glActiveTexture(GL_TEXTURE0);
+        setMatrixUniforms(m_phongShader.get(), context);
+        renderGeometryAsFilledPolygons();
+        m_phongShader->unbind();
 
-    m_worm->unbind();
+        glActiveTexture(GL_TEXTURE0);
+        if(settings.useLighting){
+            m_worm->unbind();
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    m_worm->getColorAttachment(0).bind();
-
-    m_fill->bind();
-    m_wireframeShader->bind();
-
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    setMatrixUniforms(m_wireframeShader.get(), context);
-    m_wireframeShader.get()->setUniform("searchWidth", 30);
-    renderGeometry();
-    m_worm->getColorAttachment(0).unbind();
-
-    m_fill->unbind();
-
-    m_fill2->bind();
-    m_wireframeShader->bind();
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    m_fill->getColorAttachment(0).bind();
-    setMatrixUniforms(m_wireframeShader.get(), context);
-    m_wireframeShader.get()->setUniform("searchWidth",  4);
-    m_wireframeShader.get()->setUniform("finalFill", 1);
-
-    renderGeometry();
-
-    m_fill->getColorAttachment(0).unbind();
-    m_fill2->unbind();
+            m_worm->getColorAttachment(0).bind();
+            if(settings.drawWireframe){
+                m_fill->bind();
+            }
+            m_wireframeShader->bind();
 
 
-    m_wireframeShader->unbind();
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    m_horizontalBlur->bind();
+            setMatrixUniforms(m_wireframeShader.get(), context);
+            m_wireframeShader.get()->setUniform("searchWidth", 30);
+            renderGeometry();
+            m_worm->getColorAttachment(0).unbind();
 
-    m_horizontalBlurShader->bind();
+            if(settings.drawWireframe){
+                m_fill->unbind();
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    m_fill2->getColorAttachment(0).bind();
-    setMatrixUniforms(m_horizontalBlurShader.get(), context);
-    m_horizontalBlurShader.get()->setUniform("speckle", 0);
+                m_fill2->bind();
+                m_wireframeShader->bind();
 
-    renderGeometry();
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    m_fill2->getColorAttachment(0).unbind();
+                m_fill->getColorAttachment(0).bind();
+                setMatrixUniforms(m_wireframeShader.get(), context);
+                m_wireframeShader.get()->setUniform("searchWidth",  4);
+                m_wireframeShader.get()->setUniform("finalFill", 1);
 
-    m_horizontalBlur->unbind();
+                renderGeometry();
 
-    m_horizontalBlurShader->unbind();
-    m_normalsArrowShader->bind();
-
-    glViewport(0,0,m_width, m_height);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, newHandle);
-    GLint secondTextureLocation = m_normalsArrowShader->getTextureLocation("texture2");
-    glUniform1i(secondTextureLocation,1);
+                m_fill->getColorAttachment(0).unbind();
+                m_fill2->unbind();
 
 
-    glActiveTexture(GL_TEXTURE2);
-    m_worm->getColorAttachment(1).bind();
-    GLint rayDirTexLocation = m_normalsArrowShader->getTextureLocation("rayDirData");
-    glUniform1i(rayDirTexLocation, 2);
+                m_wireframeShader->unbind();
+                if(settings.drawNormals){
+                    m_horizontalBlur->bind();
+                }
+                m_horizontalBlurShader->bind();
 
-    glActiveTexture(GL_TEXTURE0);
-    m_horizontalBlur->getColorAttachment(0).bind();
-    GLint texLocation = m_normalsArrowShader->getTextureLocation("tex");
-    glUniform1i(texLocation, 0);
-    glActiveTexture(GL_TEXTURE0);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                m_fill2->getColorAttachment(0).bind();
+                setMatrixUniforms(m_horizontalBlurShader.get(), context);
+                m_horizontalBlurShader.get()->setUniform("speckle", 0);
 
-    m_normalsArrowShader->setUniform("timer", m_renderTimes);
-    m_renderTimes +=1;
-    setMatrixUniforms(m_normalsArrowShader.get(), context);
-    renderGeometry();
-    m_worm->getColorAttachment(1).unbind();
-    m_horizontalBlur->getColorAttachment(0).unbind();
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glActiveTexture(GL_TEXTURE0);
+                renderGeometry();
+
+                m_fill2->getColorAttachment(0).unbind();
+                if(settings.drawNormals){
+                    m_horizontalBlur->unbind();
+
+                    m_horizontalBlurShader->unbind();
+                    m_normalsArrowShader->bind();
+
+                    glViewport(0,0,m_width, m_height);
+                    glClear(GL_COLOR_BUFFER_BIT);
+                    glClear(GL_DEPTH_BUFFER_BIT);
+
+                    glActiveTexture(GL_TEXTURE1);
+                    glBindTexture(GL_TEXTURE_2D, newHandle);
+                    GLint secondTextureLocation = m_normalsArrowShader->getTextureLocation("texture2");
+                    glUniform1i(secondTextureLocation,1);
+
+
+                    glActiveTexture(GL_TEXTURE2);
+                    m_worm->getColorAttachment(1).bind();
+                    GLint rayDirTexLocation = m_normalsArrowShader->getTextureLocation("rayDirData");
+                    glUniform1i(rayDirTexLocation, 2);
+
+                    glActiveTexture(GL_TEXTURE0);
+                    m_horizontalBlur->getColorAttachment(0).bind();
+                    GLint texLocation = m_normalsArrowShader->getTextureLocation("tex");
+                    glUniform1i(texLocation, 0);
+                    glActiveTexture(GL_TEXTURE0);
+
+                    m_normalsArrowShader->setUniform("timer", m_renderTimes);
+
+                    m_normalsArrowShader->setUniform("finalFill", 1);
+                    m_renderTimes +=1;
+                    setMatrixUniforms(m_normalsArrowShader.get(), context);
+                    renderGeometry();
+                    m_worm->getColorAttachment(1).unbind();
+                    m_horizontalBlur->getColorAttachment(0).unbind();
+                    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+                    glBindTexture(GL_TEXTURE_2D, 0);
+                    glActiveTexture(GL_TEXTURE0);
+                }
+            }
+        }
+    }
 }
 
 void ShapesScene::setUpImage(){

@@ -55,8 +55,10 @@ void SupportCanvas3D::setUpImage(){
 }
 
 void SupportCanvas3D::updateShader(){
-    m_currentScene->updateShader(m_tick);
-    m_tick = m_tick + 1;
+    if(m_currentScene){
+        m_currentScene->updateShader(m_tick);
+        m_tick = m_tick + 1;
+    }
 }
 
 void SupportCanvas3D::updateImage(){

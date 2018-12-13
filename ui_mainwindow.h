@@ -117,6 +117,9 @@ public:
     QCheckBox *useLightingCheckbox;
     QCheckBox *drawWireframeCheckbox;
     QCheckBox *drawNormalsCheckbox;
+    QCheckBox *raytraceCheckbox;
+    QCheckBox *furCheckbox;
+
     QWidget *shapesDockEmptySpace;
     QDockWidget *filterDock;
     QWidget *filterDockContents;
@@ -634,6 +637,11 @@ public:
 
         verticalLayout_7->addWidget(shapeParameters);
 
+
+        raytraceCheckbox = new QCheckBox(shapesDockContents);
+        raytraceCheckbox->setObjectName(QStringLiteral("raytraceCheckbox"));
+        verticalLayout_7->addWidget(raytraceCheckbox);
+
         useLightingCheckbox = new QCheckBox(shapesDockContents);
         useLightingCheckbox->setObjectName(QStringLiteral("useLightingCheckbox"));
 
@@ -646,8 +654,12 @@ public:
 
         drawNormalsCheckbox = new QCheckBox(shapesDockContents);
         drawNormalsCheckbox->setObjectName(QStringLiteral("drawNormalsCheckbox"));
-
         verticalLayout_7->addWidget(drawNormalsCheckbox);
+
+        furCheckbox = new QCheckBox(shapesDockContents);
+        furCheckbox->setObjectName(QStringLiteral("furCheckbox"));
+
+        verticalLayout_7->addWidget(furCheckbox);
 
         shapesDockEmptySpace = new QWidget(shapesDockContents);
         shapesDockEmptySpace->setObjectName(QStringLiteral("shapesDockEmptySpace"));
@@ -1489,9 +1501,10 @@ public:
         shapeParameterLabel1->setText(QApplication::translate("MainWindow", "1", 0));
         shapeParameterLabel2->setText(QApplication::translate("MainWindow", "2", 0));
         shapeParameterLabel3->setText(QApplication::translate("MainWindow", "3", 0));
-        useLightingCheckbox->setText(QApplication::translate("MainWindow", "Use lighting", 0));
-        drawWireframeCheckbox->setText(QApplication::translate("MainWindow", "Draw wireframe", 0));
-        drawNormalsCheckbox->setText(QApplication::translate("MainWindow", "Draw normals", 0));
+        useLightingCheckbox->setText(QApplication::translate("MainWindow", "Find connections", 0));
+        raytraceCheckbox->setText(QApplication::translate("MainWindow", "Raytrace Sphere Mesh", 0));
+        drawWireframeCheckbox->setText(QApplication::translate("MainWindow", "Calculate shading", 0));
+        drawNormalsCheckbox->setText(QApplication::translate("MainWindow", "Add texture", 0));
         filterDock->setWindowTitle(QApplication::translate("MainWindow", "F&ilter", 0));
         filterType->setTitle(QApplication::translate("MainWindow", "Filter Type", 0));
         filterTypeEdgeDetect->setText(QApplication::translate("MainWindow", "Edge Detect", 0));

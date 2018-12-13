@@ -9,6 +9,9 @@ uniform sampler2D rayDir_data;
 uniform int finalFill = 0;
 
 uniform int timer = 0;
+
+uniform int justFur = 0;
+
 out vec4 fragColor;
 
 vec2 projection(vec2 point){
@@ -84,8 +87,10 @@ vec4 furColor(vec2 uv, vec4 baseColor){
 
        vec2 moveSampleBy = texelSize;
        sampleAt = sampleAt + moveSampleBy;
-       //finalColor = vec4(float(i)/float(maxFurLayers),float(i)/float(maxFurLayers),float(i)/float(maxFurLayers),1.0 );
 
+       if(finalFill == 0){
+           finalColor = vec4(float(i)/float(maxFurLayers),float(i)/float(maxFurLayers),float(i)/float(maxFurLayers),1.0 );
+       }
     }
     if(finalColor.r == 0.0){
         finalColor.w = 0.1;
@@ -122,19 +127,23 @@ void main(){
 
 
         //fragColor = vec4(newColor.r * 0.5 + (currColor.r * 0.5), newColor.r * 0.5 + (currColor.r * 0.5), newColor.r * 0.5 + (currColor.r * 0.5), 1.0);
-        vec4 texColor = texture(texture2, uv.xy * 1.5);
+        vec4 texColor = texture(texture2, uv.xy * 1.5);        
 
-        //texColor = vec4(1.0);
-
+        if(finalFill == 0){
+            texColor = vec4(0.0,0.0,0.0,1.0);
+        }
         texColor = vec4(texColor.b, texColor.g, texColor.r, 1.0);
         fragColor = newColor;
 
         vec4 baseColor =  texColor * (fragColor.r * 1.5);
         vec4 finalColor =  furColor(uv, baseColor);
+
         if(finalColor.w != 0.1){
             fragColor = finalColor * 1.5;
         } else {
             fragColor = texture(rayDir_data, uv);
+            fragColor = vec4(fragColor.b , fragColor.g, fragColor.r, 1.0);
         }
+
     }
 }

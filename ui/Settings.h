@@ -135,6 +135,14 @@ struct Settings {
     bool useSpotLights;         // Enable or disable spot lights (extra credit).
     bool useKDTree;
 
+    //Final project
+    bool raytrace;
+    bool connections;
+    bool shade;
+    bool stripes;
+    bool fur;
+    bool complete;
+
     int getSceneMode();
     int getCameraMode();
 

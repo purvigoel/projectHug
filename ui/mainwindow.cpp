@@ -198,6 +198,7 @@ void MainWindow::dataBind() {
     BIND(FloatBinding::bindSliderAndTextbox(
         ui->shapeParameterSlider3, ui->shapeParameterTextbox3, settings.shapeParameter3, 1.f, 100.f))
     BIND(BoolBinding::bindCheckbox(ui->useLightingCheckbox, settings.useLighting))
+    BIND(BoolBinding::bindCheckbox(ui->raytraceCheckbox, settings.raytrace))
     BIND(BoolBinding::bindCheckbox(ui->drawWireframeCheckbox, settings.drawWireframe))
     BIND(BoolBinding::bindCheckbox(ui->drawNormalsCheckbox, settings.drawNormals))
 
