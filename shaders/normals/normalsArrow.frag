@@ -144,6 +144,5 @@ void main(){
             fragColor = texture(rayDir_data, uv);
             fragColor = vec4(fragColor.b , fragColor.g, fragColor.r, 1.0);
         }
-
     }
 }

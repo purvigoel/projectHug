@@ -232,12 +232,13 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
                     glBindTexture(GL_TEXTURE_2D, newHandle);
                     GLint secondTextureLocation = m_normalsArrowShader->getTextureLocation("texture2");
                     glUniform1i(secondTextureLocation,1);
-
+                    std::cout << secondTextureLocation << "second tex location" << std::endl;
 
                     glActiveTexture(GL_TEXTURE2);
                     m_worm->getColorAttachment(1).bind();
-                    GLint rayDirTexLocation = m_normalsArrowShader->getTextureLocation("rayDirData");
+                    GLint rayDirTexLocation = m_normalsArrowShader->getTextureLocation("rayDir_data");
                     glUniform1i(rayDirTexLocation, 2);
+                    std::cout << rayDirTexLocation << "raydir tex location" << std::endl;
 
                     glActiveTexture(GL_TEXTURE0);
                     m_horizontalBlur->getColorAttachment(0).bind();

@@ -330,7 +330,7 @@ void Shader::addTexture(const std::string &name) {
 
     GLint location = glGetUniformLocation(m_programID, name.c_str());
     m_textureLocations[name] = location;
-    //std::cout << name << location << std::endl;
+    std::cout << name << location << std::endl;
     GLint slot = m_textureSlots.size();
     m_textureSlots[location] = slot; // Assign slots in increasing order.
 }
