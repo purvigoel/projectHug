@@ -129,8 +129,8 @@ vec3 sphereNormal(vec3 p){
 //    vec3 bumpNorm = getBumpNormal(p);
     bumpNorm = vec3(bumpNorm.r*2-1, bumpNorm.g*2-1, bumpNorm.b*2-1);
 //    return bumpNorm;
-    return vec3(phongNorm.x + bumpNorm.x*2, phongNorm.y + bumpNorm.y*2, phongNorm.z + bumpNorm.z*2);
-//    return phongNorm;
+//    return vec3(phongNorm.x + bumpNorm.x*2, phongNorm.y + bumpNorm.y*2, phongNorm.z + bumpNorm.z*2);
+    return phongNorm;
 }
 
 struct Sphere {
