@@ -201,6 +201,7 @@ void MainWindow::dataBind() {
     BIND(BoolBinding::bindCheckbox(ui->raytraceCheckbox, settings.raytrace))
     BIND(BoolBinding::bindCheckbox(ui->drawWireframeCheckbox, settings.drawWireframe))
     BIND(BoolBinding::bindCheckbox(ui->drawNormalsCheckbox, settings.drawNormals))
+    BIND(BoolBinding::bindCheckbox(ui->furCheckbox, settings.fur))
 
     // Camtrans dock
     BIND(BoolBinding::bindCheckbox(ui->cameraOrbitCheckbox, settings.useOrbitCamera))

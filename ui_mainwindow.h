@@ -1503,6 +1503,7 @@ public:
         shapeParameterLabel3->setText(QApplication::translate("MainWindow", "3", 0));
         useLightingCheckbox->setText(QApplication::translate("MainWindow", "Find connections", 0));
         raytraceCheckbox->setText(QApplication::translate("MainWindow", "Raytrace Sphere Mesh", 0));
+        furCheckbox->setText(QApplication::translate("MainWindow", "Complete", 0));
         drawWireframeCheckbox->setText(QApplication::translate("MainWindow", "Calculate shading", 0));
         drawNormalsCheckbox->setText(QApplication::translate("MainWindow", "Add texture", 0));
         filterDock->setWindowTitle(QApplication::translate("MainWindow", "F&ilter", 0));

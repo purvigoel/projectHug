@@ -248,7 +248,10 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
 
                     m_normalsArrowShader->setUniform("timer", m_renderTimes);
 
-                    m_normalsArrowShader->setUniform("finalFill", 1);
+                    m_normalsArrowShader->setUniform("finalFill", 0);
+                    if(settings.fur){
+                        m_normalsArrowShader->setUniform("finalFill", 1);
+                    }
                     m_renderTimes +=1;
                     setMatrixUniforms(m_normalsArrowShader.get(), context);
                     renderGeometry();
