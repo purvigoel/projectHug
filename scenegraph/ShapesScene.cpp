@@ -277,7 +277,7 @@ void ShapesScene::setUpImage(){
 }
 
 void ShapesScene::setUpBumpTex(){
-    QImage image("textures/bump_paper.jpg");
+    QImage image("textures/bump_blobs.jpg");
     glActiveTexture(GL_TEXTURE4);
     glGenTextures(1, &m_bumpHandle);
     glBindTexture(GL_TEXTURE_2D, m_bumpHandle);

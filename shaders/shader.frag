@@ -79,14 +79,58 @@ float raySphereIntersect(vec3 origin, vec3 dir, float radius) {
 //    }
 //}
 
+//vec3 getBumpNormal(QImage texture, float repeatU, float repeatV, glm::vec4 intersectPoint) {
+vec3 getBumpNormal(vec3 intersectPoint) {
+    vec3 texSample = vec3(1.0);
+    float repeatU = 1.0;
+    float repeatV = 1.0;
+    float r;
+    float g;
+    float b;
+    float u;
+    float v;
+    float theta = atan(intersectPoint.z, intersectPoint.x);
+    if (theta <= 0) {
+        u = -theta / (2*M_PI);
+    }
+    else if (theta > 0) {
+        u = 1.f - (theta / (2 * M_PI));
+    }
+//    if (isEqual(intersectPoint.y, 0.5)) {
+    if (intersectPoint.y - 0.5 < 0.001 && intersectPoint.y - 0.5 > -0.001) {
+        v = 1.f;
+    }
+//    else if (isEqual(intersectPoint.y, -0.5)) {
+    else if (intersectPoint.y + 0.5 < 0.001 && intersectPoint.y + 0.5 > -0.001) {
+        v = 0.f;
+    }
+    else {
+        float phi = asin(intersectPoint.y / 0.5);
+        v = (phi / M_PI) + 0.5;
+    }
+    u = 1.0 - u;
+    v = 1.0 - v;
+    int width = 500;
+    int height = 500;
+    int s = int(u * repeatU * width) % width;
+    int t = int(v * repeatV * height) % height;
+    texSample = vec3(texture(bumpMapTex, vec2(s,t)));
+    return texSample;
+}
+
 vec3 sphereNormal(vec3 p){
     float adjustX = p.x;
     if(abs(p.x) < 0.000001 && abs(p.y) < 0.000001 && abs(p.z) < 0.000001){
         adjustX += 0.00001;
     }
-    vec3 texSample = vec3(texture(bumpMapTex, p.xy));
-    return normalize(vec3(2.0f * adjustX, 2.0f * p.y, 2.0f * p.z));
-//    return normalize(vec3(texSample.x*2-1, texSample.y*2-1, texSample.z*2-1));
+//    return normalize(vec3(2.0f * adjustX, 2.0f * p.y, 2.0f * p.z));
+    vec3 phongNorm = vec3(2.0f * adjustX, 2.0f * p.y, 2.0f * p.z);
+    vec3 bumpNorm = vec3(texture(bumpMapTex, p.xy));
+//    vec3 bumpNorm = getBumpNormal(p);
+    bumpNorm = vec3(bumpNorm.r*2-1, bumpNorm.g*2-1, bumpNorm.b*2-1);
+//    return bumpNorm;
+    return vec3(phongNorm.x + bumpNorm.x*2, phongNorm.y + bumpNorm.y*2, phongNorm.z + bumpNorm.z*2);
+//    return phongNorm;
 }
 
 struct Sphere {
