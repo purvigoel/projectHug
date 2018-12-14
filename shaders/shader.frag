@@ -12,12 +12,14 @@ out vec4 rayDir_data;
 uniform sampler2DRect tex;
 uniform int useTexture = 0;
 uniform vec2 repeatUV;
-const int SPHERENUM = 15;
+const int SPHERENUM = 18;
 uniform mat4 p;
 uniform mat4 v;
 uniform mat4 m;
 
 uniform int renderDir = 0;
+
+uniform int bumpMapDemo = 0;
 
 uniform samplerCube skybox;
 uniform sampler2D bumpMapTex;
@@ -41,13 +43,6 @@ vec3 rayDir = vec3(0.0);
 //}
 
 float raySphereIntersect(vec3 origin, vec3 dir, float radius) {
-    // - r0: ray origin
-    // - rd: normalized ray direction
-    // - s0: sphere center
-    // - sr: sphere radius
-    // - Returns distance from r0 to first intersecion with sphere,
-    //   or -1.0 if no intersection.
-
     //CONVERT r0 and rD to object space
     float a = dot(dir, dir);
     float b = 2.0 * dot(dir, origin);
@@ -71,13 +66,7 @@ float raySphereIntersect(vec3 origin, vec3 dir, float radius) {
     }
     return best;
 }
-//float rayTriangleIntersect(vec3 r0, vec3 rd, vec3 s0, float sr){
 
-//    for(int i = 0; i < 9; i += 3){
-//     //   vec3 currCenter = vec3(mesh[i]);
-
-//    }
-//}
 
 vec3 sphereNormal(vec3 p){
     float adjustX = p.x;
@@ -85,8 +74,13 @@ vec3 sphereNormal(vec3 p){
         adjustX += 0.00001;
     }
     vec3 texSample = vec3(texture(bumpMapTex, p.xy));
-    return normalize(vec3(2.0f * adjustX, 2.0f * p.y, 2.0f * p.z));
-//    return normalize(vec3(texSample.x*2-1, texSample.y*2-1, texSample.z*2-1));
+
+//    if(bumpMapDemo == 1){
+//        return normalize(vec3(texSample.x*2-1, texSample.y*2-1, texSample.z*2-1));
+//    } else {
+        return normalize(vec3(2.0f * adjustX, 2.0f * p.y, 2.0f * p.z));
+// //   }
+ //  return normalize(vec3(texSample.x*2-1, texSample.y*2-1, texSample.z*2-1));
 }
 
 struct Sphere {
@@ -291,6 +285,36 @@ mat4x4[SPHERENUM] makeSpheres(){
 
                  spheres[14]= transform2 * muzzle;
 
+                 mat4x4 tail = mat4x4(0.15, 0.0, 0.0, 0.0,
+                                          0.0, 0.15, 0.0, 0.0,
+                                          0.0, 0.0, 0.15, 0.0,
+                                          0.0, 0.0, 0.0, 1.0);
+
+
+                 transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+                                               0.0, 1.0, 0.0,0.0,
+                                               0.0, 0.0, 1.0, 0.0,
+                                                (3.0f),0.05f, 0.0f, 1.0);
+
+
+                  spheres[15]= transform2 * tail;
+
+                  transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+                                                0.0, 1.0, 0.0,0.0,
+                                                0.0, 0.0, 1.0, 0.0,
+                                                 (3.15f), 0.1f, 0.0f, 1.0);
+
+
+                   spheres[16]= transform2 * tail;
+
+                   transform2 = mat4x4(1, 0.0 , 0.0,0.0,
+                                                 0.0, 1.0, 0.0,0.0,
+                                                 0.0, 0.0, 1.0, 0.0,
+                                                  (3.25f), 0.2f, 0.0f, 1.0);
+
+
+                    spheres[17]= transform2 * tail;
+
                for(int i = 0; i < SPHERENUM; i ++){
                    transform2 = mat4x4(1, 0.0 , 0.0,0.0,
                                                  0.0, 1.0, 0.0,0.0,
@@ -322,20 +346,6 @@ IntersectInfo findCollision(mat4x4[SPHERENUM] transforms, int length, vec3 r0, v
         }
     }
     return info;
-}
-
-float sdRoundCone( in vec3 p, in float r1, float r2, float h )
-{
-    vec2 q = vec2( length(p.xz), p.y );
-
-    float b = (r1-r2)/h;
-    float a = sqrt(1.0-b*b);
-    float k = dot(q,vec2(-b,a));
-
-    if( k < 0.0 ) return length(q) - r1;
-    if( k > a*h ) return length(q-vec2(0.0,h)) - r2;
-
-    return dot(q, vec2(a,b) ) - r1;
 }
 
 IntersectInfo findShadowCollision(Sphere[2] spheres, int length, vec3 r0, vec3 rd, int fromID){
@@ -370,21 +380,39 @@ vec4 screenToFilm(){
     return cam * screen;
 }
 
+mat4x4[SPHERENUM] makeSpheresForBumpmapDemo(){
+    mat4x4 spheres[SPHERENUM];
+    for(int i = 0; i < SPHERENUM; i++){
+        spheres[i] = mat4x4(0.5, 0, 0, 0,
+                            0, 0.5, 0, 0,
+                            0, 0, 0.5, 0,
+                            -2 + float(i)/2, -2 + float(i)/2 + i * sin(float(timer))/100.0, float(i) / 5.0, 1);
+    }
+    return spheres;
+}
+
 void main()
 {
     fragColor = vec4(0.5,0.5,0.5, 1);
     float att = 1.0;
 
-    mat4x4 spheres[SPHERENUM] = makeSpheres();
-
+    mat4x4 spheres[SPHERENUM];
+    if(bumpMapDemo == 0){
+        spheres = makeSpheres();
+    } else {
+        spheres = makeSpheresForBumpmapDemo();
+    }
     float sphereRadius = 1.0;
     vec3 rayStart = eye.xyz;
 
     rayDir = normalize(worldSpace.xyz - eye.xyz);
 
     // light location
-    vec3 light = vec3(0  + 10 * cos(timer/15.0), 0 + sin(timer), -5 + cos(timer));
 
+    vec3 light = vec3(0  + 10 * cos(timer/15.0), 0 + sin(timer), -5 + cos(timer));
+    if(bumpMapDemo == 1){
+        light = vec3(10 * cos(timer/15.0), 0 + sin(timer), 5);
+    }
 
     vec3 lightColorConstant = vec3(1.0,1.0,1.0); // light color
     vec3 objectDiffuse = vec3(1.0,0.0,0.0); // red sphere
@@ -397,7 +425,12 @@ void main()
     float globalKD = 1;
     float frac = 1.0;
     int bounceID = -1;
-    for(int bounce = 0; bounce < 1; bounce++){
+
+    int numberOfBounces = 1;
+    if(bumpMapDemo == 1){
+        numberOfBounces = 2;
+    }
+    for(int bounce = 0; bounce < numberOfBounces; bounce++){
         // generate primary ray
 
         vec3 lightColor = lightColorConstant;
@@ -407,7 +440,9 @@ void main()
         bounceID = info.id;
         if(res != -1){
             intersected = true;
-            calcColor.b = 1.0;
+            if(bumpMapDemo == 0){
+                calcColor.b = 1.0;
+            }
             vec3 intersectAt = ((inverse(info.modelMat) * vec4(rayStart,1.0))).xyz + res * normalize((inverse(info.modelMat) * vec4(rayDir,0.0)).xyz);//point of intersection in object space
             vec3 intersectionWS = rayStart + res * rayDir; // world space
 

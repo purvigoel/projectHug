@@ -138,6 +138,32 @@ void ShapesScene::render(SupportCanvas3D *context) {
 }
 
 void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
+    if(!settings.raytrace){
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        m_phongShader->bind();
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        clearLights();
+        setLights(context->getCamera()->getViewMatrix());
+        setPhongSceneUniforms();
+
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, m_skyboxHandle);
+        GLint skyboxTexLocation = m_phongShader->getTextureLocation("skybox");
+
+        glUniform1i(skyboxTexLocation, 3);
+
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, m_bumpHandle);
+        GLint normalTexLocation = m_phongShader->getTextureLocation("bumpMapTex");
+        glUniform1i(normalTexLocation, 4);
+        m_phongShader.get()->setUniform("bumpMapDemo", 1);
+        setMatrixUniforms(m_phongShader.get(), context);
+        renderGeometryAsFilledPolygons();
+        m_phongShader->unbind();
+
+        glActiveTexture(GL_TEXTURE0);
+    }
     if(settings.raytrace){
         if(settings.useLighting){
             m_worm->bind();
@@ -160,7 +186,7 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
         glBindTexture(GL_TEXTURE_2D, m_bumpHandle);
         GLint normalTexLocation = m_phongShader->getTextureLocation("bumpMapTex");
         glUniform1i(normalTexLocation, 4);
-
+        m_phongShader.get()->setUniform("bumpMapDemo", 0);
         setMatrixUniforms(m_phongShader.get(), context);
         renderGeometryAsFilledPolygons();
         m_phongShader->unbind();
