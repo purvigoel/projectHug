@@ -8,7 +8,7 @@ RenderBuffer::RenderBuffer() :
     m_handle(0)
 {
     // TODO [Task 8] Call glGenRenderbuffers
-    std::cout << "hi im a renderbuffer" << std::endl;
+
     glGenRenderbuffers(1, &m_handle);
 }
 

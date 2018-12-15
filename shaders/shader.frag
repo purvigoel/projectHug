@@ -43,7 +43,6 @@ vec3 rayDir = vec3(0.0);
 //}
 
 float raySphereIntersect(vec3 origin, vec3 dir, float radius) {
-    //CONVERT r0 and rD to object space
     float a = dot(dir, dir);
     float b = 2.0 * dot(dir, origin);
     float c = dot(origin, origin) - (radius * radius);

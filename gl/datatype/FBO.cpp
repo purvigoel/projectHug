@@ -18,7 +18,7 @@ FBO::FBO(int numberOfColorAttachments, DEPTH_STENCIL_ATTACHMENT attachmentType, 
     m_width(width),
     m_height(height)
 {
-    std::cout << "MADE AN FBO HI" << std::endl;
+
     // TODO [Task 2]
     // Generate a new framebuffer using m_handle
     glGenFramebuffers(1, &m_handle);
@@ -56,10 +56,7 @@ void FBO::generateDepthStencilAttachment() {
     switch(m_depthStencilAttachmentType) {
         case DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY:
 
-            std::cout << "hey" << std::endl;
-
             m_depthAttachment = std::make_unique<DepthBuffer>(m_width, m_height);
-            std::cout << (int) m_depthAttachment->id() << std::endl;
             // TODO [Task 8]
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthAttachment->id());
 

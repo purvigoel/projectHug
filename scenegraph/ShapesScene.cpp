@@ -36,7 +36,6 @@ ShapesScene::ShapesScene(int width, int height) :
     loadWireframeShader();
     loadNormalsShader();
     loadNormalsArrowShader();
-    std::cout << "shapes" << std::endl;
 
     //TODO: [SHAPES] Allocate any additional memory you need...
     m_widget = new Quad();
@@ -45,7 +44,6 @@ ShapesScene::ShapesScene(int width, int height) :
     m_fill = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
     m_fill2 = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
     m_horizontalBlur = std::make_unique<FBO>(1, FBO::DEPTH_STENCIL_ATTACHMENT::DEPTH_ONLY, m_width, m_height);
-    std::cout << m_width << " " << m_height << std::endl;
     setUpImage();
     setUpBumpTex();
     setUpSkybox();
@@ -258,13 +256,11 @@ void ShapesScene::renderPhongPass(SupportCanvas3D *context) {
                     glBindTexture(GL_TEXTURE_2D, newHandle);
                     GLint secondTextureLocation = m_normalsArrowShader->getTextureLocation("texture2");
                     glUniform1i(secondTextureLocation,1);
-                    std::cout << secondTextureLocation << "second tex location" << std::endl;
 
                     glActiveTexture(GL_TEXTURE2);
                     m_worm->getColorAttachment(1).bind();
                     GLint rayDirTexLocation = m_normalsArrowShader->getTextureLocation("rayDir_data");
                     glUniform1i(rayDirTexLocation, 2);
-                    std::cout << rayDirTexLocation << "raydir tex location" << std::endl;
 
                     glActiveTexture(GL_TEXTURE0);
                     m_horizontalBlur->getColorAttachment(0).bind();
@@ -349,9 +345,7 @@ void ShapesScene::setPhongSceneUniforms() {
     m_phongShader->applyMaterial(m_material);
 }
 
-void ShapesScene::updateShader(int i){
-    std::cout << i << std::endl;
-
+void ShapesScene::updateShader(int i){   
     m_phongShader->bind();
     m_phongShader->setUniform("timer", i);
     renderGeometryAsFilledPolygons();
@@ -440,9 +434,7 @@ void ShapesScene::changeShapeType(){
             m_widget = new Cylinder();
         } else if (settings.shapeType == SHAPE_TORUS) {
             m_widget = new Torus();
-        } else {
-            std::cout << "That shape isn't implemented yet! Here's a cube" << std::endl;
-
+        } else {            
             m_widget = new Quad();
         }
         m_widget->initializeShape(settings.shapeParameter1, settings.shapeParameter2);

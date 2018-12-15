@@ -277,7 +277,7 @@ void Shader::discoverUniforms() {
     bind();
     GLint uniformCount;
     glGetProgramiv(m_programID, GL_ACTIVE_UNIFORMS, &uniformCount);
-    std::cout << "Uniform count: " << uniformCount << std::endl;
+
     for (int i = 0; i < uniformCount; i++) {
         const GLsizei bufSize = 256;
         GLsizei nameLength = 0;
@@ -288,7 +288,7 @@ void Shader::discoverUniforms() {
         name[std::min(nameLength, bufSize - 1)] = 0;
 
         std::string strname(name);
-        std::cout << name << std::endl;
+
         if (isUniformArray(name, nameLength)) {
             addUniformArray(strname, arraySize);
         } else if (isTexture(type)) {
@@ -330,7 +330,7 @@ void Shader::addTexture(const std::string &name) {
 
     GLint location = glGetUniformLocation(m_programID, name.c_str());
     m_textureLocations[name] = location;
-    std::cout << name << location << std::endl;
+
     GLint slot = m_textureSlots.size();
     m_textureSlots[location] = slot; // Assign slots in increasing order.
 }
